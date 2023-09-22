@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const {tagSchema} = require("../systemTest/TestData");
 
 
 const Schema = mongoose.Schema;

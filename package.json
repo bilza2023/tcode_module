@@ -1,5 +1,5 @@
 {
-  "name": "bilzabackend",
+  "name": "backoffice_api",
   "version": "1.0.0",
   "description": "Bilza.js application",
   "main": "index.js",
