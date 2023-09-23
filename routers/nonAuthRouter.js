@@ -44,9 +44,21 @@ try{
 }
 });
 ////////////////////////////////////////////////////////
+nonAuthRouter.get("/math_fbise", async function (req, res) {
+  try {
+    // debugger;
+    const questions = await FBISE9th.find({ });
+
+    return res.status(200).json({ questions, msg: "success" });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: 'Unknown error!' });
+  }
+});
 nonAuthRouter.get("/math_syllabus/:status", async function (req, res) {
   try {
-    debugger;
+    // debugger;
     const statusIncomming  = req.params.status;
     
     const questions = await FBISE9th.find({ status : statusIncomming });
