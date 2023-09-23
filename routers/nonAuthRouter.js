@@ -130,7 +130,6 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
     // if there is no status in the table it will return "teacher" as per the default in the Schema
     const user = await Teacher.findOne({ email });
     // console.log("user", user);
-    const status = user.status;
     if (user == null) {
       return res.status(404).json({ msg: "Email address not found" });
     }
@@ -138,10 +137,12 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
     if (await bcrypt.compare(passwordPlain, user.password)) {
       const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-      // Set Authorization with Bearer token syntax also send as token 
-      //(USE BOTH)
-      res.set("Authorization", `Bearer ${token}`);
-      return res.status(200).json({ msg: "Login successful", token: token ,status});
+    const status = user.status;
+    // const teacher_name = extractEmailPrefix(email);
+    const teacher_name = email ;
+
+    res.set("Authorization", `Bearer ${token}`);
+    return res.status(200).json({ msg: "Login successful", token: token ,status,teacher_name});
     } else {
       return res.status(401).json({  msg: "Invalid email or password" });
     }
@@ -155,6 +156,14 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
 module.exports = nonAuthRouter;
 
 
+function extractEmailPrefix(email) {
+    let atIndex = email.indexOf('@');
+    if (atIndex !== -1) {
+        return email.substring(0, atIndex);
+    } else {
+        return 'name not found';
+    }
+}
 
 
 
