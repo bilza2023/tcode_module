@@ -46,13 +46,12 @@ try{
 nonAuthRouter.get("/math_fbise", async function (req, res) {
   try {
     // debugger;
-    const questions = await FBISE9th.find({status : "empty" });
-     const total_questions = await FBISE9th.countDocuments();
-
+    const questions = await FBISE9th.find({ filledBy: { $in: [null, ""] } });
+    const total_questions = await FBISE9th.countDocuments();
     return res.status(200).json({ questions,total_questions, msg: "success" });
 
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return res.status(500).json({ msg: 'Unknown error!' });
   }
 });
