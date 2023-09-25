@@ -46,9 +46,10 @@ try{
 nonAuthRouter.get("/math_fbise", async function (req, res) {
   try {
     // debugger;
-    const questions = await FBISE9th.find({ });
+    const questions = await FBISE9th.find({status : "empty" });
+     const total_questions = await FBISE9th.countDocuments();
 
-    return res.status(200).json({ questions, msg: "success" });
+    return res.status(200).json({ questions,total_questions, msg: "success" });
 
   } catch (error) {
     console.error(error);
@@ -66,6 +67,22 @@ nonAuthRouter.get("/math_syllabus/:status", async function (req, res) {
 
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ msg: 'Unknown error!' });
+  }
+});
+nonAuthRouter.post("/filledByMe", async function (req, res) {
+  try {
+    debugger;
+    const teacher_name  = req.body.teacher_name;
+    //--check login token later
+    const token  = req.body.token;
+    
+    const questions = await FBISE9th.find({ filledBy : teacher_name });
+
+    return res.status(200).json({ questions, msg: "success" });
+
+  } catch (error) {
+    // console.error(error);
     return res.status(500).json({ msg: 'Unknown error!' });
   }
 });
