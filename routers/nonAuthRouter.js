@@ -55,6 +55,17 @@ nonAuthRouter.get("/math_fbise", async function (req, res) {
     return res.status(500).json({ msg: 'Unknown error!' });
   }
 });
+
+nonAuthRouter.post("/all_filled", async function (req, res) {
+  try {
+    const questions = await FBISE9th.find({ filledBy: { $nin: [null, ""] } });
+    return res.status(200).json({ questions, msg: "success" });
+
+  } catch (error) {
+    return res.status(500).json({ msg: 'Unknown error!' });
+  }
+});
+
 nonAuthRouter.get("/math_syllabus/:status", async function (req, res) {
   try {
     // debugger;

@@ -102,7 +102,7 @@ const MathSchema = new Schema({
 	status:{// Part string 
 	  type: String ,
 	  required:true ,
-    enum: ['empty', 'fill', 'final'],
+    enum: ['empty', 'locked', 'final'],
     required: true,
     default : 'empty'
 	},
