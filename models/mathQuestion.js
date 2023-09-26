@@ -99,10 +99,18 @@ const MathSchema = new Schema({
 	type:String ,
 	required:true ,
 	},
+	teacherComments:{
+	type:String ,
+	required:false ,
+	},
+	adminComments:{ 
+	type:String ,
+	required:false ,
+	},
 	status:{// Part string 
 	  type: String ,
 	  required:true ,
-    enum: ['empty', 'locked', 'final'],
+    enum: ['empty','fill', 'locked', 'final'],
     required: true,
     default : 'empty'
 	},
