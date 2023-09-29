@@ -82,21 +82,21 @@ nonAuthRouter.get("/math_fbise", async function (req, res) {
     // debugger;
     const questions = await FBISE9th.find({ filledBy: { $in: [null, ""] } });
     const total_questions = await FBISE9th.countDocuments();
-    return res.status(200).json({ questions,total_questions, msg: "success" });
+    return res.status(200).json({ questions,total_questions, message: "success" });
 
   } catch (error) {
     // console.error(error);
-    return res.status(500).json({ msg: 'Unknown error!' });
+    return res.status(500).json({ message: 'Unknown error!' });
   }
 });
 
 nonAuthRouter.post("/all_filled", async function (req, res) {
   try {
     const questions = await FBISE9th.find({ filledBy: { $nin: [null, ""] } });
-    return res.status(200).json({ questions, msg: "success" });
+    return res.status(200).json({ questions, message: "success" });
 
   } catch (error) {
-    return res.status(500).json({ msg: 'Unknown error!' });
+    return res.status(500).json({ message: 'Unknown error!' });
   }
 });
 
@@ -107,11 +107,11 @@ nonAuthRouter.get("/math_syllabus/:status", async function (req, res) {
     
     const questions = await FBISE9th.find({ status : statusIncomming });
 
-    return res.status(200).json({ questions, msg: "success" });
+    return res.status(200).json({ questions, message: "success" });
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: 'Unknown error!' });
+    return res.status(500).json({ message: 'Unknown error!' });
   }
 });
 nonAuthRouter.post("/filledByMe", async function (req, res) {
@@ -238,7 +238,7 @@ nonAuthRouter.post("/delete_question", async function (req, res) {
       if (mathQuestion == null){
      return res.status(404).json({ message: "Item not found" });
       } else {
-        if (mathQuestion.eqs.length >0){
+        if (!mathQuestion.eqs || mathQuestion.eqs.length > 0){
           return res.status(500).json({ message: "Question has content" });
         }else {
           await FBISE9th.findByIdAndRemove(questionId);
