@@ -61,6 +61,22 @@ try{
 }
 });
 ////////////////////////////////////////////////////////
+nonAuthRouter.post("/backup", async function (req, res) {
+  try {
+   const admin = verifyAdmin(req);
+
+  if (!admin){
+     return res.status(500).json({ message: "Not Authorised" });
+  }
+    const questions = await FBISE9th.find({ });
+    const total_questions = await FBISE9th.countDocuments();
+    return res.status(200).json({ questions,total_questions, message: "success" });
+
+  } catch (error) {
+    // console.error(error);
+    return res.status(500).json({ msg: 'Unknown error!' });
+  }
+});
 nonAuthRouter.get("/math_fbise", async function (req, res) {
   try {
     // debugger;
@@ -210,7 +226,7 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
 ////////////////////////////////////////////////////////
 nonAuthRouter.post("/delete_question", async function (req, res) {
   try {
-  debugger;
+  // debugger;
   const questionId  = req.body.id;
   const admin = verifyAdmin(req);
 
@@ -250,7 +266,7 @@ function extractEmailPrefix(email) {
 
 
 function verify(req) {
-try {
+ try {
   //  debugger;
     const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
     if (!token) {
@@ -265,7 +281,7 @@ try {
 }
 
 function verifyAdmin(req) {
-try {
+ try {
   //  debugger;
     const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
     if (!token) {
