@@ -1,22 +1,13 @@
 {
     "configurations": [
-    {
-        "name": "Attach by Process ID",
-        "processId": "${command:PickProcess}",
-        "request": "attach",
-        "skipFiles": [
-            "<node_internals>/**"
-        ],
-        "type": "node"
-    },
-    {
-        "name": "Attach by Process ID",
-        "processId": "${command:PickProcess}",
-        "request": "attach",
-        "skipFiles": [
-            "<node_internals>/**"
-        ],
-        "type": "node"
-    }
+{
+    "name": "Attach to Node",
+    "type": "node",
+    "request": "attach",
+    "restart": true,
+    "port": 9229
+}
+    
+
     ]
 }

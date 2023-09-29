@@ -13,6 +13,24 @@ const Teacher = require("../models/teacher.js");
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
+nonAuthRouter.post("/add_question" , async function(req,res) {
+  try {
+  debugger;
+  const question  = req.body.question;
+  const admin = verifyAdmin(req);
+
+  if (!admin){
+     return res.status(500).json({ message: "Not Authorised" });
+  }else {
+  await FBISE9th.create(question);
+     return res.status(200).json({ message: "Question Added" });
+  }
+  
+  } catch(error) {
+    return res.status(400).json({msg : 'unknown error!'  });
+  }
+});
+/////////////////////////////////////////////////
 nonAuthRouter.get("/get_question" , async function(req,res) {
   try {
   // debugger;
@@ -118,6 +136,18 @@ nonAuthRouter.get("/getex", async function (req, res) {
     return res.status(500).json({ msg: 'Unknown error!' });
   }
 });
+nonAuthRouter.get("/get_chapter", async function (req, res) {
+  try {
+    const chapter = req.query.chapter;
+    const questions = await MathQuestion.find({  chapter });
+
+    return res.status(200).json({ questions, message: "success" });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Unknown error!' });
+  }
+});
 ////////////////////////////////////////////////////////
 //http://localhost/mathboard?board=FBISE
 nonAuthRouter.get("/mathboard", async function (req, res) {
@@ -145,7 +175,7 @@ nonAuthRouter.get("/mathboard", async function (req, res) {
 ////////////////////////////////////////////////////////
 nonAuthRouter.post("/teacher_login", async function (req, res) {
   try {
-  debugger;
+  // debugger;
     const email = req.body.email;
     const passwordPlain = req.body.password;
 
@@ -178,6 +208,33 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
   }
 });
 ////////////////////////////////////////////////////////
+nonAuthRouter.post("/delete_question", async function (req, res) {
+  try {
+  debugger;
+  const questionId  = req.body.id;
+  const admin = verifyAdmin(req);
+
+  if (!admin){
+     return res.status(500).json({ message: "Not Authorised" });
+  }
+  //////////////////////////////////// 
+  const mathQuestion = await FBISE9th.findById( questionId );
+      if (mathQuestion == null){
+     return res.status(404).json({ message: "Item not found" });
+      } else {
+        if (mathQuestion.eqs.length >0){
+          return res.status(500).json({ message: "Question has content" });
+        }else {
+          await FBISE9th.findByIdAndRemove(questionId);
+          return res.status(200).json({ message: "Question Deleted" });
+        }
+      }     
+
+  } catch(error) {
+    return res.status(400).json({msg : 'unknown error!'  });
+  }
+});
+
 ////////////////////////////////////////////////////////
 module.exports = nonAuthRouter;
 
@@ -190,6 +247,42 @@ function extractEmailPrefix(email) {
         return 'name not found';
     }
 }
+
+
+function verify(req) {
+try {
+  //  debugger;
+    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
+    if (!token) {
+      return res.status(403).json({ msg: "A token is required for authentication" });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded.user; // Add user to request object
+    return { user: decoded.user };
+  } catch (error) {
+    return false;
+  }
+}
+
+function verifyAdmin(req) {
+try {
+  //  debugger;
+    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
+    if (!token) {
+      return false;
+    }
+    const decodedUser = jwt.verify(token, process.env.JWT_SECRET);
+    if ( decodedUser.user.status !== "admin" ){
+      return false;
+    }else {
+      return decodedUser.user;
+    }
+  ///////////////////////  
+  } catch (error) {
+    return false;
+  }
+}
+
 
 
 
