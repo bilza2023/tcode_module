@@ -49,7 +49,7 @@ nonAuthRouter.get("/get_question" , async function(req,res) {
 ///////////////////////////////////////////////////////////////////////
 nonAuthRouter.post("/upload_math" , async function(req,res) {
 try{
-    debugger;
+    // debugger;
     const question = req.body.question;
     const options = { new: false, upsert: false }; 
     await FBISE9th.findByIdAndUpdate( question._id , question,options);
@@ -226,7 +226,7 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
 ////////////////////////////////////////////////////////
 nonAuthRouter.post("/delete_question", async function (req, res) {
   try {
-  // debugger;
+  debugger;
   const questionId  = req.body.id;
   const admin = verifyAdmin(req);
 

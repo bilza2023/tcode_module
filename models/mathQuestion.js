@@ -107,12 +107,13 @@ const MathSchema = new Schema({
 	type:String ,
 	required:false ,
 	},
-	status:{// Part string 
+  // unloced = starting , the admin can lock it means now it can not be edited and on final we can add time and it is checked.
+	status:{
 	  type: String ,
 	  required:true ,
-    enum: ['empty','fill', 'locked', 'final'],
+    enum: ['unlocked', 'locked', 'final'],
     required: true,
-    default : 'empty'
+    default : 'unlocked'
 	},
 	free:{// Part string 
 	  type: Boolean ,
