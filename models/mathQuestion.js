@@ -162,9 +162,9 @@ const gridSchema = new Schema({
     required: true
   },
   rows: { // Type of content, can be 'text' or 'code'
-    type: [rowSchema],
+    type: [[rowSchema]],
     required: true,
-    default: 'code'
+    default: []
   },
   sp:{
 	type:[spfsItem] ,
@@ -216,6 +216,13 @@ const MathSchema = new Schema({
 	required:false ,
 	},
   // unloced = starting , the admin can lock it means now it can not be edited and on final we can add time and it is checked.
+	questionType:{
+	  type: String ,
+	  required:true ,
+    enum: ['equation', 'grid'],
+    required: true,
+    default : 'equation'
+	},
 	status:{
 	  type: String ,
 	  required:true ,
