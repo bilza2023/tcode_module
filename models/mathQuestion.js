@@ -69,6 +69,114 @@ const eqSchema = new Schema({
 	default :[]
 	} 
 });
+const rowSchema = new Schema({
+startTime : {
+    type: Number,
+    required:true,
+	  default :0 
+  },
+endTime : {
+    type: Number,
+    required:true,
+	  default :0 
+  },
+content : {
+    type: String,
+    required:true,
+	  default :0 
+  },
+bl : {
+    type: Boolean,
+    required:true,
+	  default :false 
+  },
+bt : {
+    type: Boolean,
+    required:true,
+	  default :false 
+  },
+br : {
+    type: Boolean,
+    required:true,
+	  default :false 
+  },
+bb : {
+    type: Boolean,
+    required:true,
+	  default :false 
+  },
+type : {
+    type: String,
+    required:true,
+     enum: ['code', 'text'],
+	  default :'code' 
+  },
+});
+
+const globalSchema = new Schema({
+bgColor : {
+    type: String,
+    required:true,
+	  default :"#293544" 
+  },
+fontSize : {
+    type: Number,
+    required:true,
+	  default : 1 
+  },
+padding : {
+    type: Number,
+    required:true,
+	  default :1 
+  },
+margin : {
+    type: Number,
+    required:true,
+	  default :1 
+  },
+cellBorderColor : {
+    type: String,
+    required:true,
+	  default :"#e52222" 
+  },
+cellFontColor : {
+    type: String,
+    required:true,
+	  default :"white" 
+  },
+showGrid : {
+    type: Boolean,
+    required:true,
+	  default :false, 
+  },
+gridColor : {
+    type: String,
+    required:true,
+	  default :"#384556" 
+  },
+});
+
+const gridSchema = new Schema({
+  global: { 
+    type: globalSchema,
+    required: true
+  },
+  rows: { // Type of content, can be 'text' or 'code'
+    type: [rowSchema],
+    required: true,
+    default: 'code'
+  },
+  sp:{
+	type:[spfsItem] ,
+	required:true ,
+	default :[]
+	}, 
+  fs:{
+	type:[spfsItem] ,
+	required:true ,
+	default :[]
+	} 
+});
 
 ///////////////////////////////////////////
 const MathSchema = new Schema({
@@ -133,6 +241,11 @@ const MathSchema = new Schema({
 	type:[eqSchema] ,
 	required:true ,
 	default :[]
+  }, 
+	grid:{
+	type: gridSchema ,
+	required:true ,
+	default :{}
   } 
   
 });
