@@ -24,8 +24,8 @@ db.once('open',()=> {
     async function run(){
     try {
     
-      // const resp = await Questions.CreateQRegGrid('FBISE',99,1,"5.55",999,"i");
-      const resp = await Questions.DeleteQ('652184826f6f6a9c75ab19ba');
+      const resp = await Questions.CreateQReg('eqs','FBISE',99,1,"5.55",999,"i");
+      // const resp = await Questions.DeleteQ('652184826f6f6a9c75ab19ba');
       console.log(resp);
 
       // await MathFull.deleteMany({});

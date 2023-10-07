@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const {eqSchema,gridSchema} = require('./mathFullEmbededSchemas');
 ///////////////////////
 const PartnNoSchema = new Schema({
     exercise:{//if isSpecail == true they it have no use just set it to "". 
@@ -47,11 +48,11 @@ required:true ,
 	required:true , 
 	},
 //ref can NOT be null which means that the question must create  it  eqs record when it is created we will create empty and fill it later.	
-  ref:{ //  
-	type:  Schema.Types.ObjectId ,
-	required: true,
-	unique: true,
-	},
+//   ref:{ //  
+// 	type:  Schema.Types.ObjectId ,
+// 	required: true,
+// 	unique: true,
+// 	},
 	teacherComments:{
 	type:String ,
 	required:false ,
@@ -92,6 +93,16 @@ required:true ,
 	filledBy: {
     type: String,
     required: false
+    },
+	eqs: {
+    type: [eqSchema],
+    required: true,
+	default : []
+    },
+	grid: {
+    type: gridSchema,
+    required: true,
+	default: {}
     }
   
 });

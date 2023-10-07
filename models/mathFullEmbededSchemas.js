@@ -80,13 +80,7 @@ const eqSchema = new Schema({
 	default :[]
 	} 
 });
-const eqsSchema = new Schema({
- eqs:{
- //prev it was not required since it was part of the question and question can be created without a solution but now question is seperate and this is just solution. once it is created it must have some eqs
-	type:[eqSchema] ,
-	required:true 
-  }
-});
+
 ///////////////////////////////////////////////////////////
 ///////////////////////Grid Schema/////////////////////////
 ///////////////////////////////////////////////////////////
@@ -181,7 +175,8 @@ gridColor : {
 const gridSchema = new Schema({
   global: { 
     type: globalSchema,
-    required: false,
+    required: true,
+    default : () => ({}),
   },
   rows: { // Type of content, can be 'text' or 'code'
     type: [[rowSchema]],
@@ -200,7 +195,7 @@ const gridSchema = new Schema({
 	} 
 });
 
-const Eqs = mongoose.model('Eq', eqsSchema);
-const Grid = mongoose.model('Grid', gridSchema);
+// const Eqs = mongoose.model('Eq', eqsSchema);
+// const Grid = mongoose.model('Grid', gridSchema);
 
-module.exports = {Eqs,Grid};
+module.exports = {eqSchema,gridSchema};
