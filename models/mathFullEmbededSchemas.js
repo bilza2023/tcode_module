@@ -1,14 +1,25 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// , 
+// 	grid:{
+// 	type: gridSchema ,
+// 	required:false ,
+// 	default :{}
+//   } 
+///////////////////////////////////////////////////////////
+/////////////////////////////////EQ SCHEMA ////////////////
+///////////////////////////////////////////////////////////
+
 const spfsItem = new Schema({
+//it should be named as content since it does not contain code only but can cnotain all other contents
   code: { // Code string
     type: String,
     required: true,
   },
-  type: { // Type of content, can be 'html', 'text', or 'code'
+  type: { // Type of content:
     type: String,
-    enum: ['html', 'text', 'code' , 'image','img','table','tbl'],
+    enum: ['html', 'text', 'code' , 'image','img','table','tbl','tableCode'],
     required: true
   }
 });
@@ -17,7 +28,7 @@ const spfsItem = new Schema({
 const eqSchema = new Schema({
   step: { // Step number
     type: Number,
-    required: true
+    required: false
   },
   type: { // Type of content, can be 'text' or 'code'
     type: String,
@@ -69,6 +80,17 @@ const eqSchema = new Schema({
 	default :[]
 	} 
 });
+const eqsSchema = new Schema({
+ eqs:{
+ //prev it was not required since it was part of the question and question can be created without a solution but now question is seperate and this is just solution. once it is created it must have some eqs
+	type:[eqSchema] ,
+	required:true 
+  }
+});
+///////////////////////////////////////////////////////////
+///////////////////////Grid Schema/////////////////////////
+///////////////////////////////////////////////////////////
+
 const rowSchema = new Schema({
 startTime : {
     type: Number,
@@ -155,7 +177,7 @@ gridColor : {
 	  default :"#384556" 
   },
 });
-
+//in grid we have 2 main objects global and rows (in eqs we just have 1 obj which is [eq]). also  in Eqs every eq has its internal SP and FS but here we just have global SP and FS
 const gridSchema = new Schema({
   global: { 
     type: globalSchema,
@@ -178,87 +200,7 @@ const gridSchema = new Schema({
 	} 
 });
 
-///////////////////////////////////////////
-const MathSchema = new Schema({
-  board: { // Board name, can be one of the specified values
-    type: String,
-    enum: ['Punjab', 'Pakhtoonkhwa', 'Sind', 'Balochistan', 'FBISE'],
-    required: true
-  },
-  class: { // Class number
-    type: Number,
-    required:true,
-	  default :9 
-  },
-  chapter:{ // Chapter number 
-	type:Number ,
-	required:true , 
-	},
-	exercise:{// Exercise string 
-	type:String ,
-	required:true ,
-	},
+const Eqs = mongoose.model('Eq', eqsSchema);
+const Grid = mongoose.model('Grid', gridSchema);
 
-	questionNo:{// Question number 
-	type:Number ,
-	required:true ,
-	},
-	part:{// Part string 
-	type:String ,
-	required:true ,
-	},
-	teacherComments:{
-	type:String ,
-	required:false ,
-	},
-	adminComments:{ 
-	type:String ,
-	required:false ,
-	},
-  // unloced = starting , the admin can lock it means now it can not be edited and on final we can add time and it is checked.
-	questionType:{
-	  type: String ,
-	  required:true ,
-    enum: ['equation', 'grid'],
-    required: true,
-    default : 'equation'
-	},
-	status:{
-	  type: String ,
-	  required:true ,
-    enum: ['unlocked','fill' ,'locked', 'final'],
-    required: true,
-    default : 'unlocked'
-	},
-	free:{// Part string 
-	  type: Boolean ,
-	  required:true ,
-    defaul : true //change it to false later
-	},
-	filename: {
-    type: String,
-    required: true,
-    unique: true
-    },
-	filledBy: {
-    type: String,
-    required: false
-    },
-	eqs:{
-	type:[eqSchema] ,
-	required:false ,
-	default :[]
-  }, 
-	grid:{
-	type: gridSchema ,
-	required:false ,
-	default :{}
-  } 
-  
-});
-
-const MathQuestion = mongoose.model('Math', MathSchema,"matht");
-const FBISE9th = mongoose.model('Math', MathSchema,"fbise9th");
-const FBISE9th2 = mongoose.model('Math', MathSchema,"fbise9th2");
-
-module.exports = {MathQuestion,FBISE9th,FBISE9th2};
+module.exports = {Eqs,Grid};

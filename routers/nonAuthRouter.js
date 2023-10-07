@@ -9,38 +9,65 @@ const nonAuthRouter = express.Router();
 
 const {MathQuestion} = require("../models/mathQuestion.js");
 const {FBISE9th} = require("../models/mathQuestion.js");
+const {FBISE9th2} = require("../models/mathQuestion.js");
+const {MathFull} = require("../models/mathFull.js");
+const {Eqs} = require("../models/mathFullEmbededSchemas.js");
+const {Grid} = require("../models/mathFullEmbededSchemas.js");
 const Teacher = require("../models/teacher.js");
-
-/////////////////////////////////////////////////
+const deleteQ = require("../question/deleteQ.js")
+const createNewQReg = require("../question/createNewQReg.js")
 /////////////////////////////////////////////////
 nonAuthRouter.post("/add_question" , async function(req,res) {
   try {
-  debugger;
+ debugger;
   const question  = req.body.question;
-  const admin = verifyAdmin(req);
+  const result = await createNewQReg(question.questionType,question.board,question.class,question.chapter,question.exercise,question.questionNo,question.part);
+      if (result== true){
+        return res.status(200).json({message : 'question added'  });
+      }  else {
+        return res.status(500).json({message : 'failed to add'  });
+      }
 
-  if (!admin){
-     return res.status(500).json({ message: "Not Authorised" });
-  }else {
-  await FBISE9th.create(question);
-     return res.status(200).json({ message: "Question Added" });
-  }
-  
   } catch(error) {
     return res.status(400).json({msg : 'unknown error!'  });
   }
 });
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////
+nonAuthRouter.post("/delete_question" , async function(req,res) {
+  try {
+ debugger;
+  const id  = req.body.id;
+  const result = await deleteQ(id);
+      if (result.ok){
+        return res.status(200).json({message : 'question deleted'  });
+      }  else {
+        return res.status(500).json({message : 'failed to delete'  });
+      }
+
+  } catch(error) {
+    return res.status(400).json({msg : 'unknown error!'  });
+  }
+});
+///////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////
 nonAuthRouter.get("/get_question" , async function(req,res) {
   try {
-  // debugger;
+// debugger;
   const quizId  = req.query.id;
   
-    const mathQuestion = await FBISE9th.findById( quizId );
-      if (mathQuestion == null){
-        return res.status(404).json({ msg: "Item not found" });
+    // const question = await MathFull.findById( quizId ).lean();
+    const question = await MathFull.findById( quizId );
+      if (question !== null && question.questionType == 'eqs'  ){
+          const eqs = await Eqs.findById( question.ref );
+          // question.eqs = eqs;
+        return res.status(200).json({ question,eqs, msg: "success" });
       }      
-      return res.status(200).json({ mathQuestion, msg: "success" });
+      if (question !== null && question.questionType == 'grid'  ){
+          const grid = await Grid.findById( question.ref );
+          // question.grid = grid;
+        return res.status(200).json({ question,grid, msg: "success" });
+      }      
 
   } catch(error) {
     return res.status(400).json({msg : 'unknown error!'  });
@@ -56,6 +83,22 @@ try{
 
     return res.status(200).json({status : "ok"});
             // console.log(subscribers);
+}catch(error){
+        return res.status(400).json({status : "error" , msg:"failed to save question"   });
+}
+});
+////////////////////////////////////////////////////////
+nonAuthRouter.post("/update_eq" , async function(req,res) {
+try{
+    
+    const question = req.body.question;
+    const eqs = req.body.eqs;
+      // debugger;
+      const options = { new: false, upsert: false };
+      await Eqs.findByIdAndUpdate(question.ref, {eqs}, options);
+      await MathFull.findByIdAndUpdate(question._id, question, options);
+      return res.status(200).json({ status: "ok" });
+
 }catch(error){
         return res.status(400).json({status : "error" , msg:"failed to save question"   });
 }
@@ -80,8 +123,8 @@ nonAuthRouter.post("/backup", async function (req, res) {
 nonAuthRouter.get("/math_fbise", async function (req, res) {
   try {
     // debugger;
-    const questions = await FBISE9th.find({ filledBy: { $in: [null, ""] } });
-    const total_questions = await FBISE9th.countDocuments();
+    const questions = await MathFull.find();
+    const total_questions = await MathFull.countDocuments();
     return res.status(200).json({ questions,total_questions, message: "success" });
 
   } catch (error) {
@@ -99,6 +142,23 @@ nonAuthRouter.post("/all_filled", async function (req, res) {
     return res.status(500).json({ message: 'Unknown error!' });
   }
 });
+// nonAuthRouter.get("/del_empty", async (req, res) => {
+//   try {
+//     // Delete documents where "filledBy" is an empty string ("") or undefined
+//     const result = await FBISE9th.deleteMany({ filledBy: { $in: [null, "", undefined] } });
+
+//     if (result.deletedCount > 0) {
+//     let message= `${result.deletedCount} documents deleted successfully`;
+//       console.log(message );
+//     } else {
+//       // return res.status(404).json({ message: '' });
+//       console.log("No matching documents found for deletion");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: 'Unknown error occurred' });
+//   }
+// });
 
 nonAuthRouter.get("/math_syllabus/:status", async function (req, res) {
   try {
@@ -121,7 +181,7 @@ nonAuthRouter.post("/filledByMe", async function (req, res) {
     //--check login token later
     const token  = req.body.token;
     
-    const questions = await FBISE9th.find({ filledBy : teacher_name });
+    const questions = await MathFull.find({ filledBy : teacher_name });
 
     return res.status(200).json({ questions, msg: "success" });
 
@@ -130,28 +190,8 @@ nonAuthRouter.post("/filledByMe", async function (req, res) {
     return res.status(500).json({ msg: 'Unknown error!' });
   }
 });
-nonAuthRouter.get("/getex", async function (req, res) {
-  try {
-    const boardParam = req.query.board;
-    const exerciseParam = req.query.exercise;
 
-    if (!boardParam || !exerciseParam) {
-      return res.status(400).json({ msg: "Board and exercise parameters are required" });
-    }
 
-    const mathQuestions = await MathQuestion.find({ board: boardParam, exercise: exerciseParam });
-
-    if (mathQuestions.length === 0) {
-      return res.status(404).json({ msg: "No matching math questions found" });
-    }
-
-    return res.status(200).json({ mathQuestions, msg: "success" });
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: 'Unknown error!' });
-  }
-});
 nonAuthRouter.get("/get_chapter", async function (req, res) {
   try {
     const chapter = req.query.chapter;
@@ -223,37 +263,12 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
     return res.status(500).json({  msg: "Login failed", error });
   }
 });
+ 
+
 ////////////////////////////////////////////////////////
-nonAuthRouter.post("/delete_question", async function (req, res) {
-  try {
-  debugger;
-  const questionId  = req.body.id;
-  const admin = verifyAdmin(req);
-
-  if (!admin){
-     return res.status(500).json({ message: "Not Authorised" });
-  }
-  //////////////////////////////////// 
-  const mathQuestion = await FBISE9th.findById( questionId );
-      if (mathQuestion == null){
-     return res.status(404).json({ message: "Item not found" });
-      } else {
-        if (!mathQuestion.eqs || mathQuestion.eqs.length > 0){
-          return res.status(500).json({ message: "Question has content" });
-        }else {
-          await FBISE9th.findByIdAndRemove(questionId);
-          return res.status(200).json({ message: "Question Deleted" });
-        }
-      }     
-
-  } catch(error) {
-    return res.status(400).json({msg : 'unknown error!'  });
-  }
-});
-
 ////////////////////////////////////////////////////////
 module.exports = nonAuthRouter;
-
+////////////////////////////////////////////////////////
 
 function extractEmailPrefix(email) {
     let atIndex = email.indexOf('@');
@@ -263,7 +278,6 @@ function extractEmailPrefix(email) {
         return 'name not found';
     }
 }
-
 
 function verify(req) {
  try {
