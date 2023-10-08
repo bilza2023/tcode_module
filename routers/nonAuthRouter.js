@@ -26,9 +26,9 @@ nonAuthRouter.post("/add_reg_question" , async function(req,res) {
   try {
  debugger;
   const question  = req.body.question;
-  const result = await Question.CreateQReg(question.questionType,question.board,question.class,question.chapter,question.exercise,question.questionNo,question.part);
+  const result = await Question.CreateQReg(question.questionType,question.board,question.classNo,question.chapter,question.exercise,question.questionNo,question.part);
       if (result.ok){
-        return res.status(200).json({message : 'question added'  });
+        return res.status(200).json({message : 'Question added'  });
       }  else {
         return res.status(500).json({message : 'failed to add'  });
       }
@@ -70,6 +70,27 @@ try{
 }catch(error){
         return res.status(400).json({status : "error" , msg:"failed to save question"   });
 }
+});
+/////////////////////////////////////////////////
+nonAuthRouter.post("/filled_by_me" , async function(req,res) {
+  try {
+debugger;
+// console.log("filled");
+  const teacher_name  = req.body.teacher_name;
+// return res.json({teacher_name});
+  
+  const questions = await MathFull.find( {filledBy:teacher_name} ).lean();
+  //   const questions = await MathFull.findById({filledBy : teacher_name });
+      if (questions !== null   ){
+        return res.status(200).json({ questions, message: "success" });
+      }else {
+        return res.status(404).json({ message: "None found" });
+      }      
+            
+
+  } catch(error) {
+    return res.status(400).json({message : 'unknown error!'  });
+  }
 });
 /////////////////////////////////////////////////
 nonAuthRouter.get("/get_question" , async function(req,res) {
