@@ -11,9 +11,9 @@ nonAuthRouter.post("/add_special_question" , async function(req,res) {
   try {
  debugger;
   const question  = req.body.question;
-  const result = await Question.CreateQSpecial(question.questionType,question.board,question.class,question.chapter,question.name);
+  const result = await Question.CreateQSpecial(question.questionType,question.board,question.classNo,question.chapter,question.name);
       if (result.ok){
-        return res.status(200).json({message : 'question added'  });
+        return res.status(200).json({message : 'Question added'  });
       }  else {
         return res.status(500).json({message : 'failed to add'  });
       }
