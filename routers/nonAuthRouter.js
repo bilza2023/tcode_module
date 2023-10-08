@@ -1,54 +1,59 @@
-
 require('dotenv').config();
-
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
-
 const nonAuthRouter = express.Router();
-
-const {MathQuestion} = require("../models/mathQuestion.js");
-// const {FBISE9th} = require("../models/mathQuestion.js");
-// const {FBISE9th2} = require("../models/mathQuestion.js");
 const {MathFull} = require("../models/mathFull.js");
-// const {Eqs} = require("../models/mathFullEmbededSchemas.js");
-// const {Grid} = require("../models/mathFullEmbededSchemas.js");
-// const Teacher = require("../models/teacher.js");
-// const deleteQ = require("../question/deleteQ.js")
-// const createNewQReg = require("../question/createNewQReg.js")
+const Question = require('../questions/Questions.js');
+const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
-// nonAuthRouter.post("/add_question" , async function(req,res) {
-//   try {
-//  debugger;
-//   const question  = req.body.question;
-//   const result = await createNewQReg(question.questionType,question.board,question.class,question.chapter,question.exercise,question.questionNo,question.part);
-//       if (result== true){
-//         return res.status(200).json({message : 'question added'  });
-//       }  else {
-//         return res.status(500).json({message : 'failed to add'  });
-//       }
+nonAuthRouter.post("/add_special_question" , async function(req,res) {
+  try {
+ debugger;
+  const question  = req.body.question;
+  const result = await Question.CreateQSpecial(question.questionType,question.board,question.class,question.chapter,question.name);
+      if (result.ok){
+        return res.status(200).json({message : 'question added'  });
+      }  else {
+        return res.status(500).json({message : 'failed to add'  });
+      }
 
-//   } catch(error) {
-//     return res.status(400).json({msg : 'unknown error!'  });
-//   }
-// });
+  } catch(error) {
+    return res.status(400).json({msg : 'unknown error!'  });
+  }
+});
+nonAuthRouter.post("/add_reg_question" , async function(req,res) {
+  try {
+ debugger;
+  const question  = req.body.question;
+  const result = await Question.CreateQReg(question.questionType,question.board,question.class,question.chapter,question.exercise,question.questionNo,question.part);
+      if (result.ok){
+        return res.status(200).json({message : 'question added'  });
+      }  else {
+        return res.status(500).json({message : 'failed to add'  });
+      }
+
+  } catch(error) {
+    return res.status(400).json({msg : 'unknown error!'  });
+  }
+});
 ///////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////
-// nonAuthRouter.post("/delete_question" , async function(req,res) {
-//   try {
-//  debugger;
-//   const id  = req.body.id;
-//   const result = await deleteQ(id);
-//       if (result.ok){
-//         return res.status(200).json({message : 'question deleted'  });
-//       }  else {
-//         return res.status(500).json({message : 'failed to delete'  });
-//       }
+nonAuthRouter.post("/delete_question" , async function(req,res) {
+  try {
+ debugger;    
+  const id  = req.body.id;
+  const result = await Question.Delete(id)
+      if (result.ok){
+        return res.status(200).json({message : 'question deleted'  });
+      }  else {
+        return res.status(500).json({message : 'failed to delete'  });
+      }
 
-//   } catch(error) {
-//     return res.status(400).json({msg : 'unknown error!'  });
-//   }
-// });
+  } catch(error) {
+    return res.status(400).json({msg : 'unknown error!'  });
+  }
+});
 ///////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 nonAuthRouter.post("/update" , async function(req,res) {
@@ -86,145 +91,18 @@ nonAuthRouter.get("/get_question" , async function(req,res) {
   }
 });
 ///////////////////////////////////////////////////////////////////////
-// nonAuthRouter.post("/upload_math" , async function(req,res) {
-// try{
-//     debugger;
-//     const question = req.body.question;
-//     const options = { new: false, upsert: false }; 
-//     await FBISE9th.findByIdAndUpdate( question._id , question,options);
+nonAuthRouter.get("/fbise_math9th_syllabus", async function (req, res) {
+  try {
+    const questions = await MathFull.find();
 
-//     return res.status(200).json({status : "ok"});
-//             // console.log(subscribers);
-// }catch(error){
-//         return res.status(400).json({status : "error" , msg:"failed to save question"   });
-// }
-// });
+    return res.status(200).json({ questions, message: "success" });
 
-////////////////////////////////////////////////////////
-// nonAuthRouter.post("/backup", async function (req, res) {
-//   try {
-//    const admin = verifyAdmin(req);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Unknown error!' });
+  }
+});
 
-//   if (!admin){
-//      return res.status(500).json({ message: "Not Authorised" });
-//   }
-//     const questions = await FBISE9th.find({ });
-//     const total_questions = await FBISE9th.countDocuments();
-//     return res.status(200).json({ questions,total_questions, message: "success" });
-
-//   } catch (error) {
-//     // console.error(error);
-//     return res.status(500).json({ msg: 'Unknown error!' });
-//   }
-// });
-// nonAuthRouter.get("/math_fbise", async function (req, res) {
-//   try {
-//     // debugger;
-//     const questions = await MathFull.find();
-//     const total_questions = await MathFull.countDocuments();
-//     return res.status(200).json({ questions,total_questions, message: "success" });
-
-//   } catch (error) {
-//     // console.error(error);
-//     return res.status(500).json({ message: 'Unknown error!' });
-//   }
-// });
-
-// nonAuthRouter.post("/all_filled", async function (req, res) {
-//   try {
-//     const questions = await FBISE9th.find({ filledBy: { $nin: [null, ""] } });
-//     return res.status(200).json({ questions, message: "success" });
-
-//   } catch (error) {
-//     return res.status(500).json({ message: 'Unknown error!' });
-//   }
-// });
-// nonAuthRouter.get("/del_empty", async (req, res) => {
-//   try {
-//     // Delete documents where "filledBy" is an empty string ("") or undefined
-//     const result = await FBISE9th.deleteMany({ filledBy: { $in: [null, "", undefined] } });
-
-//     if (result.deletedCount > 0) {
-//     let message= `${result.deletedCount} documents deleted successfully`;
-//       console.log(message );
-//     } else {
-//       // return res.status(404).json({ message: '' });
-//       console.log("No matching documents found for deletion");
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: 'Unknown error occurred' });
-//   }
-// });
-
-// nonAuthRouter.get("/math_syllabus/:status", async function (req, res) {
-//   try {
-//     // debugger;
-//     const statusIncomming  = req.params.status;
-    
-//     const questions = await FBISE9th.find({ status : statusIncomming });
-
-//     return res.status(200).json({ questions, message: "success" });
-
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: 'Unknown error!' });
-//   }
-// });
-// nonAuthRouter.post("/filledByMe", async function (req, res) {
-//   try {
-//     debugger;
-//     const teacher_name  = req.body.teacher_name;
-//     //--check login token later
-//     const token  = req.body.token;
-    
-//     const questions = await MathFull.find({ filledBy : teacher_name });
-
-//     return res.status(200).json({ questions, msg: "success" });
-
-//   } catch (error) {
-//     // console.error(error);
-//     return res.status(500).json({ msg: 'Unknown error!' });
-//   }
-// });
-
-
-// nonAuthRouter.get("/get_chapter", async function (req, res) {
-//   try {
-//     const chapter = req.query.chapter;
-//     const questions = await MathQuestion.find({  chapter });
-
-//     return res.status(200).json({ questions, message: "success" });
-
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: 'Unknown error!' });
-//   }
-// });
-////////////////////////////////////////////////////////
-//http://localhost/mathboard?board=FBISE
-// nonAuthRouter.get("/mathboard", async function (req, res) {
-//   try {
-//     const boardParam = req.query.board;
-//     // const exerciseParam = req.query.exercise;
-
-//     if (!boardParam) {
-//       return res.status(400).json({ msg: "Board parameter is required" });
-//     }
-
-//     const mathQuestions = await MathQuestion.find({ board: boardParam });
-
-//     if (mathQuestions.length === 0) {
-//       return res.status(404).json({ msg: "No matching math questions found" });
-//     }
-
-//     return res.status(200).json({ mathQuestions, msg: "success" });
-
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ msg: 'Unknown error!' });
-//   }
-// });
 ////////////////////////////////////////////////////////
 nonAuthRouter.post("/teacher_login", async function (req, res) {
   try {
@@ -234,7 +112,7 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
 
     // Input validation
     if (!email || !passwordPlain) {
-      return res.status(400).json({ msg: "Email and password are required" });
+      return res.status(400).json({ message: "Email and password are required" });
     }
     // if there is no status in the table it will return "teacher" as per the default in the Schema
     const user = await Teacher.findOne({ email });
@@ -260,9 +138,6 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
     return res.status(500).json({  msg: "Login failed", error });
   }
 });
- 
-
-////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 module.exports = nonAuthRouter;
 ////////////////////////////////////////////////////////
