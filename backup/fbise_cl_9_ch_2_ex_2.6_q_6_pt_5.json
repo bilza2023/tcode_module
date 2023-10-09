@@ -1,0 +1,33 @@
+{
+  "board": "FBISE",
+  "classNo": 9,
+  "chapter": 2,
+  "isSpecial": false,
+  "partNo": {
+    "exercise": "2.6",
+    "questionNo": 6,
+    "part": 5
+  },
+  "questionType": "eqs",
+  "status": "unlocked",
+  "free": false,
+  "filename": "fbise_cl_9_ch_2_ex_2.6_q_6_pt_5",
+  "eqs": [],
+  "grid": {
+    "rows": [],
+    "_id": "6522e10585282ad77fd33c0e",
+    "global": {
+      "bgColor": "#293544",
+      "fontSize": 1,
+      "padding": 1,
+      "margin": 1,
+      "cellBorderColor": "#e52222",
+      "cellFontColor": "white",
+      "showGrid": false,
+      "gridColor": "#384556",
+      "_id": "6522e10585282ad77fd33c0f"
+    },
+    "sp": [],
+    "fs": []
+  }
+}
