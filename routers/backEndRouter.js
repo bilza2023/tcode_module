@@ -6,6 +6,22 @@ const backEndRouter = express.Router();
 const MathFullObj = require('../mathFull/MathFullObj.js');
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
+//////////////////////////////////
+backEndRouter.use((req, res, next) => {
+  debugger;
+  if (req.path === '/teacher_login') {
+    // Skip verification for the /teacher_login route
+    next();
+  } else {
+    const user = verify(req);
+    if (user) {
+      req.user = user;
+      next();
+    } else {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+  }
+});
 // backEndRouter.post("/add_special_question" , async function(req,res) {
 //   try {
 //  debugger;
@@ -73,21 +89,16 @@ try{
 /////////////////////////////////////////////////
 backEndRouter.post("/filled_by_me" , async function(req,res) {
   try {
-// debugger;
-// console.log("filled");
   const teacher_name  = req.body.teacher_name;
-// return res.json({teacher_name});
   
   const questions = await MathFullObj.Where( {filledBy:teacher_name} );
       if (questions !== null   ){
         return res.status(200).json({ questions:questions.questions, message: "success" });
-      }else {
+      } else {
         return res.status(404).json({ message: "None found" });
-      }      
-            
-
+      }                  
   } catch(error) {
-    return res.status(400).json({message : 'unknown error!'  });
+        return res.status(400).json({ message : 'unknown error!' });
   }
 });
 /////////////////////////////////////////////////
@@ -112,9 +123,12 @@ debugger;
 backEndRouter.get("/fbise_math9th_syllabus", async function (req, res) {
   try {
   debugger;
-    const questions = await MathFullObj.Where({});
-
-    return res.status(200).json({ questions :questions.questions, message: "success" });
+    const result  = await MathFullObj.GetSyllabus();
+    if (result.ok){
+      return res.status(200).json({ questions :result.questions, message: "success",ok:true });
+    }else {
+      return res.status(500).json({ ok:false, message: "failed to load syllabus" });
+    }
 
   } catch (error) {
     console.error(error);

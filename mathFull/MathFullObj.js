@@ -7,6 +7,27 @@ const getQSpecial = require("./fns/getQSpecial.js");
 class MathFullObj{
 
 //updateEqs
+static async GetSyllabus() {
+  try {
+ const questions = await MathFull.find({}).select({
+      classNo: 1,
+      chapter: 1,
+      board: 1,
+      isSpecial: 1,
+      partNo: 1,
+      questionType: 1,
+      status: 1,
+      free: 1,
+      filename: 1,
+      filledBy:1
+    });
+
+    return { ok: true,questions };
+  } catch (error) {
+    return { ok: false, message: "failed to get syllabus" };
+  }
+}
+//updateEqs
 static async updateData(question) {
   try {
     const { _id, eqs } = question;
