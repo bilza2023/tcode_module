@@ -58,7 +58,7 @@ try{
 //Get Question
 static async Get(id){
   try {
-debugger;
+// debugger;
     const question = await MathFull.findById( id ).lean();;
       if (question !== null   ){
         return { question, message: "success" ,ok:true};
@@ -73,7 +73,7 @@ debugger;
 //create new
 static async CreateQSpecial(questionType,board,classNo,chapter,name){
  try{
- debugger;
+//  debugger;
     const qReg = getQSpecial(questionType,board,classNo,chapter,name);
     const questionData = checkNewQ(qReg);
             
@@ -126,7 +126,7 @@ static async Count(query) {
 //////////////////////////
 static async Delete(id){
 try{
- debugger;
+//  debugger;
      let objectId = new mongoose.Types.ObjectId(id);
      const question = await MathFull.findById(objectId );    
      if (!question){
