@@ -10,6 +10,7 @@ const cors = require('cors');
 const db = require("./mongoDb/mongo.js");
 /////////////////////////////////////////////----->>>>
 const backEndRouter = require('./routers/backEndRouter.js');
+const frontEndRouter = require('./routers/frontEndRouter.js');
 ////////////////////////////////////////////////
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 80;
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //.. Route middlewares--/////////////////////////////////////
 app.use("/be",backEndRouter);
+app.use("/fe",frontEndRouter);
 ///////////////////////////Routes////////////////////////
 app.get('/', async (req, res) =>{
 // const ret = Survey.findById()
