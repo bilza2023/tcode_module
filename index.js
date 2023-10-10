@@ -9,7 +9,7 @@ const express  =require('express');
 const cors = require('cors');
 const db = require("./mongoDb/mongo.js");
 /////////////////////////////////////////////----->>>>
-const nonAuthRouter = require('./routers/nonAuthRouter.js');
+const backEndRouter = require('./routers/backEndRouter.js');
 ////////////////////////////////////////////////
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 80;
@@ -23,7 +23,7 @@ app.use(cors( )); //working
 app.use(express.urlencoded({ extended: true }));
 
 //.. Route middlewares--/////////////////////////////////////
-app.use("/",nonAuthRouter);
+app.use("/be",backEndRouter);
 ///////////////////////////Routes////////////////////////
 app.get('/', async (req, res) =>{
 // const ret = Survey.findById()

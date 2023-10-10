@@ -2,11 +2,11 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
-const nonAuthRouter = express.Router();
+const backEndRouter = express.Router();
 const MathFullObj = require('../mathFull/MathFullObj.js');
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
-// nonAuthRouter.post("/add_special_question" , async function(req,res) {
+// backEndRouter.post("/add_special_question" , async function(req,res) {
 //   try {
 //  debugger;
 //   const question  = req.body.question;
@@ -21,7 +21,7 @@ const Teacher = require("../models/teacher.js");
 //     return res.status(400).json({msg : 'unknown error!'  });
 //   }
 // });
-// nonAuthRouter.post("/add_reg_question" , async function(req,res) {
+// backEndRouter.post("/add_reg_question" , async function(req,res) {
 //   try {
 //  debugger;
 //   const question  = req.body.question;
@@ -38,7 +38,7 @@ const Teacher = require("../models/teacher.js");
 // });
 ///////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////
-// nonAuthRouter.post("/delete_question" , async function(req,res) {
+// backEndRouter.post("/delete_question" , async function(req,res) {
 //   try {
 //  debugger;    
 //   const id  = req.body.id;
@@ -55,7 +55,7 @@ const Teacher = require("../models/teacher.js");
 // });
 ///////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
-nonAuthRouter.post("/update" , async function(req,res) {
+backEndRouter.post("/update" , async function(req,res) {
 try{
     debugger;
     const question = req.body.question;
@@ -71,7 +71,7 @@ try{
   }
 });
 /////////////////////////////////////////////////
-nonAuthRouter.post("/filled_by_me" , async function(req,res) {
+backEndRouter.post("/filled_by_me" , async function(req,res) {
   try {
 // debugger;
 // console.log("filled");
@@ -91,7 +91,7 @@ nonAuthRouter.post("/filled_by_me" , async function(req,res) {
   }
 });
 /////////////////////////////////////////////////
-nonAuthRouter.get("/get_question" , async function(req,res) {
+backEndRouter.get("/get_question" , async function(req,res) {
   try {
 debugger;
   const quizId  = req.query.id;
@@ -109,7 +109,7 @@ debugger;
   }
 });
 ///////////////////////////////////////////////////////////////////////
-nonAuthRouter.get("/fbise_math9th_syllabus", async function (req, res) {
+backEndRouter.get("/fbise_math9th_syllabus", async function (req, res) {
   try {
   debugger;
     const questions = await MathFullObj.Where({});
@@ -123,7 +123,7 @@ nonAuthRouter.get("/fbise_math9th_syllabus", async function (req, res) {
 });
 
 ////////////////////////////////////////////////////////
-nonAuthRouter.post("/teacher_login", async function (req, res) {
+backEndRouter.post("/teacher_login", async function (req, res) {
   try {
   // debugger;
     const email = req.body.email;
@@ -148,7 +148,7 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
     const teacher_name = email ;
 
     res.set("Authorization", `Bearer ${token}`);
-    return res.status(200).json({ msg: "Login successful", token: token ,status,teacher_name});
+    return res.status(200).json({ message: "Login successful", token: token ,status,teacher_name});
     } else {
       return res.status(401).json({  msg: "Invalid email or password" });
     }
@@ -158,7 +158,7 @@ nonAuthRouter.post("/teacher_login", async function (req, res) {
   }
 });
 ////////////////////////////////////////////////////////
-module.exports = nonAuthRouter;
+module.exports = backEndRouter;
 ////////////////////////////////////////////////////////
 
 function extractEmailPrefix(email) {
