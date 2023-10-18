@@ -22,11 +22,13 @@ db.once('open',()=> {
     try {
 // debugger;
 //    const filledBy = await MathFullObj.Where({filledBy: 'bils32611@gmail.com'});
+debugger;
+const specialQ = await MathFullObj.CreateQSpecial("eqs","FBISE",9,1,"testing");
     // console.log("filledBy" , filledBy);
 //    const getQ = await MathFullObj.Get('65241c3194cd0f67ca0a9d31');
     // console.log("getQ" , getQ);
-   const updt = await MathFullObj.Update();
-    console.log("updt" , updt);
+//    const updt = await MathFullObj.Update();
+    // console.log("updt" , updt);
     //  await addSyllabus();
         // await MathFull.deleteMany({});
         // const r = await MathFullObj.CreateQReg('eqs','FBISE',9,2,"1.1",1,0);

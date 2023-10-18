@@ -71,16 +71,21 @@ static async Get(id){
 
 }
 //create new
-static async CreateQSpecial(questionType,board,classNo,chapter,name){
+static async CreateQSpecial(questionType,board,classNo,chapter,name,exercise=""){
  try{
 //  debugger;
-    const qReg = getQSpecial(questionType,board,classNo,chapter,name);
+    const qReg = getQSpecial(questionType,board,classNo,chapter,name,exercise);
     const questionData = checkNewQ(qReg);
-            
+    const existingQuestion = await MathFull.findOne(
+      { filename: questionData. question.filename });
+  if (existingQuestion) {
+      return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
+    }
+    //--now actual insert    
             let q = new MathFull(questionData.question);
             const question = await q.save();
             
-      return { question ,ok:true};
+      return { question , ok : true};
  } catch (e) {
     return {message: e.message , ok:false,errorCode : e.code}
  }

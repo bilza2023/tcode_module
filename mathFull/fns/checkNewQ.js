@@ -22,8 +22,15 @@ if (question.isSpecial == true){
     //if its special we only need the name in partNo
     const pno = {};
     pno.name = coreQData.partNo.name;
+    pno.exercise = coreQData.partNo.exercise;
     question.partNo = pno;
+    //--exercise bound special question
+    if (question.partNo.exercise !== "" && question.partNo.exercise !== undefined){
+    question.filename = `${question.board.toLowerCase()}_cl_${question.classNo}_ch_${question.chapter}_ex_${question.partNo.exercise}_${question.partNo.name}`;
+    }else {
+    //--chapter bound special question
     question.filename = `${question.board.toLowerCase()}_cl_${question.classNo}_ch_${question.chapter}_${question.partNo.name}`;
+    }
     //     }
 }else {
     const pno = {};
@@ -45,7 +52,7 @@ if (question.isSpecial == true){
     }
 
  }catch(e){
-
+    console.log("failed to create question");
  }
 }
 //////////////////////////////////////

@@ -1,8 +1,7 @@
 const MathFullObj = require('../mathFull/MathFullObj');
 
-
 async function addExercise(exercise,chapterNo,exerciseNo,board,classNo){
-console.log("exercise",exercise);
+// console.log("exercise",exercise);
 
     for (let k = 0; k < exercise.q.length; k++) {
         const q = exercise.q[k];
