@@ -107,7 +107,8 @@ required:true ,
   
 });
 
-const MathFull = mongoose.model('MathFull', MathFullSchema);
+const MathFull = mongoose.model('MathFull', MathFullSchema, 'syllabus');
 const MathUpload = mongoose.model('MathUpload', MathFullSchema);
 
 module.exports = {MathFull,MathUpload};
+// module.exports = {MathFullSchema};

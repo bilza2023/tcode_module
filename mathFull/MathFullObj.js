@@ -70,7 +70,7 @@ static async Get(id){
   }
 
 }
-//create new
+//A special question may or may not have exercise. if it has exercise then it is special to that exercise but if it does not then it is special to the chapter.
 static async CreateQSpecial(questionType,board,classNo,chapter,name,exercise=""){
  try{
 //  debugger;
