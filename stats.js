@@ -1,10 +1,6 @@
 require('dotenv').config();
 const db = require("./mongoDb/mongo.js");
-
-const MathFullObj = require("./mathFull/MathFullObj.js");
-// const addSyllabus = require('./syllabus/addSyllabus.js');
-const addExerciseRegQs = require("./syllabus/addExerciseRegQs.js")  ;
-const addExerciseSpecialQs = require('./syllabus/addExerciseSpecialQs');
+const stats = require("./stats/stats.js");
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
 
@@ -16,8 +12,7 @@ db.once('open',()=> {
     async function run(){
     try {
         
-        await addExerciseRegQs();
-        await addExerciseSpecialQs();
+        await stats();
         console.log("done..");
 
     } catch(error) {

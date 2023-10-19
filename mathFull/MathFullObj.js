@@ -96,7 +96,11 @@ static async CreateQReg(questionType,board,classNo,chapter,exercise,questionNo,p
 //  debugger;
     const qReg = getQReg(questionType,board,classNo,chapter,exercise,questionNo,part);
     const questionData = checkNewQ(qReg);
-            
+        const existingQuestion = await MathFull.findOne(
+      { filename: questionData. question.filename });
+  if (existingQuestion) {
+      return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
+    }        
             let q = new MathFull(questionData.question);
             const question = await q.save();
             
@@ -107,7 +111,7 @@ static async CreateQReg(questionType,board,classNo,chapter,exercise,questionNo,p
 
 }
 ///////////////////////////////
-static async Where(query) {
+static async Where(query={}) {
    try {
    // Use Mongoose's "find" method with the provided query
    const questions = await MathFull.find(query);
@@ -118,11 +122,9 @@ static async Where(query) {
    }
 }
 //////////////////////////
-static async Count(query) {
+static async Count(query={}) {
    try {
-   // Use Mongoose's "find" method with the provided query
    const count = await MathFull.countDocuments(query);
-
    return { count, ok: true };
    } catch (e) {
    return { message: e.message, ok: false, errorCode: e.code };

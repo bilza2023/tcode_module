@@ -65,7 +65,7 @@ required:true ,
 	questionType:{ 
 	  type: String ,
 	  required:true ,
-    enum: ['eqs', 'grid'],
+    enum: ['eqs', 'grid' , 'presentation'],
     required: true,
 	},
 	status:{
@@ -106,9 +106,7 @@ required:true ,
     }
   
 });
+//This is where we can change the table/collection name
+const MathFull = mongoose.model('MathFull', MathFullSchema);
 
-const MathFull = mongoose.model('MathFull', MathFullSchema, 'syllabus');
-const MathUpload = mongoose.model('MathUpload', MathFullSchema);
-
-module.exports = {MathFull,MathUpload};
-// module.exports = {MathFullSchema};
+module.exports = {MathFull};
