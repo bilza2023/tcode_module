@@ -8,7 +8,7 @@ const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
 backEndRouter.use((req, res, next) => {
-  // debugger;
+  debugger;
   if (req.path === '/teacher_login') {
     // Skip verification for the /teacher_login route
     next();
@@ -80,6 +80,7 @@ backEndRouter.use((req, res, next) => {
 backEndRouter.post("/update" , async function(req,res) {
 try{
     debugger;
+    // debugger;
     const question = req.body.question;
       if (!question.filledBy || question.filledBy == "" || question.filledBy == undefined){
         question.filledBy = req.user.email;
