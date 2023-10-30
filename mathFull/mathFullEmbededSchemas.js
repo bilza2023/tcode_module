@@ -5,6 +5,20 @@ const Schema = mongoose.Schema;
 /////////////////////////////////EQ SCHEMA ////////////////
 ///////////////////////////////////////////////////////////
 
+const fsSchema = new Schema({
+  code: { // Code string
+    type: String,
+    required: true,
+    default : ''
+  },
+  type: { // Type of content:
+    type: String,
+    required: true,
+    //-so that we always know that we have atleast 1 comp always working
+    default : 'TestComp'
+  }
+});
+
 const spfsItem = new Schema({
 //it should be named as content since it does not contain code only but can cnotain all other contents
   code: { // Code string
@@ -69,9 +83,8 @@ const eqSchema = new Schema({
 	default :[]
 	}, 
   fs:{
-	type:[spfsItem] ,
-	required:true ,
-	default :[]
+	type: fsSchema ,
+	required:false ,
 	} 
 });
 
@@ -178,11 +191,6 @@ const gridSchema = new Schema({
     default: []
   },
   sp:{
-	type:[spfsItem] ,
-	required:true ,
-	default :[]
-	}, 
-  fs:{
 	type:[spfsItem] ,
 	required:true ,
 	default :[]

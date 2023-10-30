@@ -4,8 +4,8 @@ const checkNewQ = require('./fns/checkNewQ.js');
 const getQReg = require("./fns/getQReg.js");
 const getQSpecial = require("./fns/getQSpecial.js");
 
-class MathFullObj{
 
+class MathFullObj{
 //updateEqs
 static async GetSyllabus() {
   try {
