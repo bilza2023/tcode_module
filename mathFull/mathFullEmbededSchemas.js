@@ -197,7 +197,4 @@ const gridSchema = new Schema({
 	} 
 });
 
-// const Eqs = mongoose.model('Eq', eqsSchema);
-// const Grid = mongoose.model('Grid', gridSchema);
-
 module.exports = {eqSchema,gridSchema};
