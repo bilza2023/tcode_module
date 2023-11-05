@@ -17,7 +17,7 @@ db.once('open',()=> {
     try {
         
         await addExerciseRegQs();
-        await addExerciseSpecialQs();
+        // await addExerciseSpecialQs();
         console.log("done..");
 
     } catch(error) {

@@ -48,11 +48,14 @@ static async updateData(question) {
 static async Update(question){
 try{
       const options = { new: false, upsert: false };
-      await MathFull.findByIdAndUpdate(question._id, question, options);
+      const r = await MathFull.findByIdAndUpdate(question._id, question, options);
+      // console.log(r);
       return { ok: true };
 
   }catch(error){
-        return res.status(400).json({ok: false , message:"failed to update question" });
+        // return res.status(400).json({ok: false , message:"failed to update question" });
+        return {ok: false,error}
+
   }
 }
 //Get Question

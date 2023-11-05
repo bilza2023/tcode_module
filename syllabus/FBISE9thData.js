@@ -5,7 +5,7 @@ chapters:[
         [   //This is 1 chapter (all exercises)
             {type : "eqs" , ex: "1.1" , q : [0,0,0]},          
             {type : "eqs" , ex: "1.2" , q : [0,0,0,0,0,0]},          
-            {type : "eqs" , ex: "1.3" , q : [0,0,0,0,10,2,0,6]},          
+            {type : "eqs" , ex: "1.3" , q : [0,0,9,6,10,2,0,6]},          
             {type : "eqs" , ex: "1.4" , q : [0,0,5,5,4,2]},          
             {type : "eqs" , ex: "1.5" , q : [0,0,4,2,2,2]},          
             {type : "eqs" , ex: "1.6" , q : [8,2,2,2,2,2]},  
