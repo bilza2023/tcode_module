@@ -74,7 +74,7 @@ const SlidesSchema = new Schema({
 });
 
 const PresentationSchema = new Schema({
-    title:{ 
+    name:{ 
 	type:String ,
 	required:false ,
 	},

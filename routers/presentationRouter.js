@@ -7,7 +7,7 @@ const Presentation = require('../presentation/presentationSchema.js');
 
 presentationRouter.post("/readAll" , async function(req,res) {
   try {
-// debugger;
+  // debugger;
    const items = await Presentation.find({});
       if (items !== null   ){
         return res.status(200).json({ items });
