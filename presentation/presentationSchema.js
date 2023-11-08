@@ -30,10 +30,10 @@ const ItemSchema = new Schema({
 	default:0
 	},
  extra:{ 
-	type:[KVPairSchema] ,
-	required:true ,
-	default:[]
-	},
+ 	type: Schema.Types.Mixed,
+    required: true,
+    default: {},
+    }
 });
 
 const SlidesSchema = new Schema({

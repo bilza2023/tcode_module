@@ -22,7 +22,7 @@ presentationRouter.post("/readAll" , async function(req,res) {
 
 presentationRouter.post("/read" , async function(req,res) {
   try {
-debugger;
+// debugger;
   const id  = req.body.id;
    const presentation = await Presentation.findById( id ).lean();;
       if (presentation !== null   ){
