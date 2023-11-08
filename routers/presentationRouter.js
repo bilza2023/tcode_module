@@ -41,7 +41,7 @@ try{
     const presentation = req.body.presentation;
     const options = { new: false, upsert: true };
     const r =  await Presentation.findByIdAndUpdate(presentation._id, presentation, options);
-    if (r.ok){
+    if (r){
       return res.status(200).json({ ok:true });
     }else {
       return res.status(500).json({ ok:false, message:"failed to update" });
