@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const {eqSchema,gridSchema} = require('./mathFullEmbededSchemas');
+const SlidesSchema = require('../presentation/slidesSchema');
+
 ///////////////////////
 const PartnNoSchema = new Schema({
     exercise:{//if isSpecail == true they it have no use just set it to "". 
@@ -98,12 +100,13 @@ required:true ,
     type: [eqSchema],
     required: true,
 	default : []
+    },
+	slides: {
+    type: [SlidesSchema],
+    required: true,
+	default : []
     }
-	// ,
-	// grid: {
-    // type: gridSchema,
-    // required: true,
-    // }
+	
   
 });
 //This is where we can change the table/collection name

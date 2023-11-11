@@ -1,5 +1,7 @@
 
 require('dotenv').config();
+const slidesByTcode = require('./presentation_fn/slidesByTcode.js');
+
 const express = require('express');
 const presentationRouter = express.Router();
 const Presentation = require('../presentation/presentationSchema.js');
@@ -24,9 +26,12 @@ presentationRouter.post("/read" , async function(req,res) {
   try {
 // debugger;
   const id  = req.body.id;
-   const presentation = await Presentation.findById( id ).lean();;
-      if (presentation !== null   ){
-        return res.status(200).json({ presentation });
+  const tcode  = req.body.tcode;
+  if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
+  
+   const slides = await slidesByTcode(tcode,id);
+      if (slides !== null   ){
+        return res.status(200).json({ slides });
       }else {
         return res.status(404).json({ message: "Not found" });
       }
@@ -35,6 +40,7 @@ presentationRouter.post("/read" , async function(req,res) {
     return res.status(400).json({message : 'unknown error!'  });
   }
 });
+
 presentationRouter.post("/update" , async function(req,res) {
 try{
     debugger;
