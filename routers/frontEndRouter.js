@@ -5,23 +5,6 @@ const express = require('express');
 const frontEndRouter = express.Router();
 const MathFullObj = require('../mathFull/MathFullObj.js');
 const User = require("../models/user.js");
-//////////////////////////////////
-// frontEndRouter.use((req, res, next) => {
-// //   debugger;
-//   if (req.path === '/login' || req.path === 'get_question') {
-//     // Skip verification for the /teacher_login route
-//     next();
-//   } else {
-//     const user = verify(req);
-//     if (user) {
-//       req.user = user;
-//       //no admin required in front-end api
-//       next();
-//     } else {
-//       return res.status(403).json({ message: 'Unauthorized access' });
-//     }
-//   }
-// });
 
 /////////////////////////////////////////////////
 frontEndRouter.post("/get_question" , async function(req,res) {

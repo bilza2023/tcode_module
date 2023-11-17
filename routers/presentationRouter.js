@@ -24,14 +24,14 @@ presentationRouter.post("/readAll" , async function(req,res) {
 
 presentationRouter.post("/read" , async function(req,res) {
   try {
-// debugger;
+debugger;
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
   
-   const slides = await slidesByTcode(tcode,id);
+   const {slides,item}  = await slidesByTcode(tcode,id);
       if (slides !== null   ){
-        return res.status(200).json({ slides });
+        return res.status(200).json({slides,item});
       }else {
         return res.status(404).json({ message: "Not found" });
       }
