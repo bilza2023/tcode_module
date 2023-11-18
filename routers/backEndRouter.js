@@ -85,7 +85,7 @@ try{
         question.filledBy = req.user.email;
       }
     const r = await MathFullObj.Update(question);
-    console.log(r);
+    // console.log(r);
       if (r.ok){
       return res.status(200).json({ ok:true });
       }else {
