@@ -1,6 +1,7 @@
 
 require('dotenv').config();
 const slidesByTcode = require('./presentation_fn/slidesByTcode.js');
+const updateSlidesByTcode = require('./presentation_fn/updateSlidesByTcode.js');
 
 const express = require('express');
 const presentationRouter = express.Router();
@@ -24,7 +25,7 @@ presentationRouter.post("/readAll" , async function(req,res) {
 
 presentationRouter.post("/read" , async function(req,res) {
   try {
-debugger;
+  // debugger;
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
@@ -42,22 +43,25 @@ debugger;
 });
 
 presentationRouter.post("/update" , async function(req,res) {
-try{
-    debugger;
-    const presentation = req.body.presentation;
-    const options = { new: false, upsert: true };
-    const r =  await Presentation.findByIdAndUpdate(presentation._id, presentation, options);
-    if (r){
-      return res.status(200).json({ ok:true });
-    }else {
-      return res.status(500).json({ ok:false, message:"failed to update" });
-    }
+  try {
+  // debugger;
+  const presentation = req.body.presentation;
+  const id  = presentation._id;
+  const tcode  = req.body.tcode;
+  if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
+  
+   const tf  = await updateSlidesByTcode(tcode,presentation);
+      if (tf   ){
+        return res.status(200).json({ message: 'success' });
+      }else {
+        return res.status(404).json({ message: "failed to save" });
+      }
 
-  }catch(error){
-        // return res.status(500).json({status : "error" , msg:"failed to save presentation"   });
-        console.log("error", error);
+  } catch(error) {
+    return res.status(400).json({message : 'unknown error!'  });
   }
 });
+///////////////////////////////////////////////
 presentationRouter.post("/create" , async function(req,res) {
 try{
     debugger;

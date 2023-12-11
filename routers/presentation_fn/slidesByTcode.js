@@ -19,7 +19,8 @@ const convertEqsToSlide = require('./convertEqsToSlide');
             slides = resp.question.slides;
             item = resp.question;
                 if (!slides){
-                slides = await convertEqsToSlide(resp.question.eqs);
+                slides = [];
+                // slides = await convertEqsToSlide(resp.question.eqs);
                 }
             }catch(e){
                slides = []; //added on 17-nov-2023
