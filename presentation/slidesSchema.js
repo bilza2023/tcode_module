@@ -33,6 +33,11 @@ const ItemSchema = new Schema({
  	type: Schema.Types.Mixed,
     required: true,
     default: {},
+    },
+ arr:{ 
+ 	type: Schema.Types.Mixed,
+    required: true,
+    default: [],
     }
 });
 
