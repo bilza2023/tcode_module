@@ -44,7 +44,7 @@ presentationRouter.post("/read" , async function(req,res) {
 
 presentationRouter.post("/update" , async function(req,res) {
   try {
-  // debugger;
+  debugger;
   const presentation = req.body.presentation;
   const id  = presentation._id;
   const tcode  = req.body.tcode;
