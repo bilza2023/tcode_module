@@ -35,7 +35,7 @@ const ItemSchema = new Schema({
     default: {},
     },
  arr:{ 
- 	type: Schema.Types.Mixed,
+ 	type: [Schema.Types.Mixed],
     required: true,
     default: [],
     }
