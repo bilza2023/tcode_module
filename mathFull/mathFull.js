@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const {eqSchema,gridSchema} = require('./mathFullEmbededSchemas');
+// const {eqSchema,gridSchema} = require('./mathFullEmbededSchemas');
 const SlidesSchema = require('../presentation/slidesSchema');
 
 ///////////////////////
@@ -66,18 +66,18 @@ required:true ,
   // unloced = starting , the admin can lock it means now it can not be edited and on final we can add time and it is checked.
 	questionType:{ 
 	  type: String ,
-	  required:true ,
-    enum: ['eqs', 'grid' , 'presentation'],
+    enum: ['paid', 'login' , 'free'],
     required: true,
+	default : 'paid'
 	},
 	status:{
 	  type: String ,
 	  required:true ,
     //unlocked when created and not set at all , fill when filled for first time if we want to change then we have to do it manually.locked when checked by Admin as correct and stuff like FS , SP is being added and finally "final after time inserted"  
 	//- ihave removed empty since not if "ref" is empty we know that it is empty. no need for seperate empty.by keeping ref optional we can create a question and its solution seperately 
-    enum: ['unlocked' ,'fill' ,'locked', 'final'],
+    enum: ['empty' ,'fill' ,'locked', 'final'],
     required: true,
-    default : 'unlocked'
+    default : 'empty'
 	},
     //--if this is free or paid content
 	free:{// Part string 
@@ -96,11 +96,7 @@ required:true ,
     type: String,
     required: false
     },
-	eqs: {
-    type: [eqSchema],
-    required: true,
-	default : []
-    },
+	
 	slides: {
     type: [SlidesSchema],
     required: true,

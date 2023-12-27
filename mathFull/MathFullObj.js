@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const {MathFull} = require("./mathFull.js");
-const checkNewQ = require('./fns/checkNewQ.js');
-const getQReg = require("./fns/getQReg.js");
-const getQSpecial = require("./fns/getQSpecial.js");
+// const checkNewQ = require('./fns/checkNewQ.js');
+// const getQReg = require("./fns/getQReg.js");
+const getQuestionData = require("./fns/getQuestionData.js");
+// const getQSpecial = require("./fns/getQSpecial.js");
 
 
 class MathFullObj{
@@ -74,42 +75,64 @@ static async Get(id){
 
 }
 //A special question may or may not have exercise. if it has exercise then it is special to that exercise but if it does not then it is special to the chapter.
-static async CreateQSpecial(questionType,board,classNo,chapter,name,exercise=""){
- try{
-//  debugger;
-    const qReg = getQSpecial(questionType,board,classNo,chapter,name,exercise);
-    const questionData = checkNewQ(qReg);
-    const existingQuestion = await MathFull.findOne(
-      { filename: questionData. question.filename });
-  if (existingQuestion) {
-      return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
-    }
-    //--now actual insert    
-            let q = new MathFull(questionData.question);
-            const question = await q.save();
+// static async CreateQSpecial(questionType,board,classNo,chapter,name, exercise=""){
+//  try{
+//  //  debugger;
+//     const qReg = getQSpecial(questionType,board,classNo,chapter,name,exercise);
+//     const questionData = checkNewQ(qReg);
+//     const existingQuestion = await MathFull.findOne(
+//       { filename: questionData. question.filename });
+//   if (existingQuestion) {
+//       return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
+//     }
+//     //--now actual insert    
+//             let q = new MathFull(questionData.question);
+//             const question = await q.save();
             
-      return { question , ok : true};
- } catch (e) {
-    return {message: e.message , ok:false,errorCode : e.code}
- }
+//       return { question , ok : true};
+//  } catch (e) {
+//     return {message: e.message , ok:false,errorCode : e.code}
+//  }
 
-}
-static async CreateQReg(questionType,board,classNo,chapter,exercise,questionNo,part){
+// }
+// static async CreateQReg(questionType,board,classNo,chapter,exercise,questionNo,part){
+//  try{
+// //  debugger;
+//     const qReg = getQReg(questionType,board,classNo,chapter,exercise,questionNo,part);
+//     const questionData = checkNewQ(qReg);
+//         const existingQuestion = await MathFull.findOne(
+//       { filename: questionData. question.filename });
+//   if (existingQuestion) {
+//       return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
+//     }        
+//             let q = new MathFull(questionData.question);
+//             const question = await q.save();
+            
+//       return { question ,ok:true};
+//  } catch (e) {
+//     return {message: e.message , ok:false,errorCode : e.code}
+//  }
+
+// }
+static async CreateQuestion(qData){
  try{
 //  debugger;
-    const qReg = getQReg(questionType,board,classNo,chapter,exercise,questionNo,part);
-    const questionData = checkNewQ(qReg);
-        const existingQuestion = await MathFull.findOne(
-      { filename: questionData. question.filename });
-  if (existingQuestion) {
-      return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
-    }        
-            let q = new MathFull(questionData.question);
-            const question = await q.save();
-            
-      return { question ,ok:true};
+    const questionData = getQuestionData(qData);
+
+    if(questionData.ok){
+      let q = new MathFull(questionData.question);
+      const question = await q.save();
+      return {ok:true , question};
+    }else {
+        return {ok:false,message:questionData.message};
+    }
+    
  } catch (e) {
+    if(e.code == 11000){
+    return {message: 'Question already exists' , ok:false}
+    }else{
     return {message: e.message , ok:false,errorCode : e.code}
+    }
  }
 
 }
@@ -142,17 +165,10 @@ try{
      if (!question){
             return {ok : false ,message : "question not found", status:404 };
      }
-     if (question.questionType === "eqs"){
-        if (question.eqs.length > 0){
+     if (question.slides.length > 0){
             return {ok : false ,message : "question has content", status:500 };
-        }
      }
-     if (question.questionType === "grid"){
-        if (question.grid && question.grid.rows && question.grid.rows.length > 0){
-            return {ok : false ,message : "question has content", status:500 };
-        }
-     }
-
+     
      await MathFull.findByIdAndRemove(objectId );    
      return {ok : true ,message : "Question deleted", status:200 };
 
@@ -164,3 +180,4 @@ try{
 }//questions
 
 module.exports = MathFullObj;
+

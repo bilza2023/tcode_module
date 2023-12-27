@@ -1,2 +1,4 @@
 node_modules
 .env
+/routers/adminRouter
+getSyllabus.js
