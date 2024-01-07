@@ -12,13 +12,15 @@ db.once('open', () => {
 
   async function run() {
     const options = { new: false, upsert: false };
-    const questions = await MathFull.find();
+    const questions = await MathFull.find({});
 
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
-      question.status = 'fill';
-    await MathFull.findByIdAndUpdate(question._id,question, options);
-    console.log(i);
+     
+      question.grid = {};
+      question.egs = [];
+      await MathFull.findByIdAndUpdate(question._id,question, options);
+      console.log(i);
     } 
     
     console.log("done..");
