@@ -1,5 +1,5 @@
 // const Presentation = require('../presentation/presentationSchema');
-const fbise9math = require('./q_manager/questionSchema/QuestionSchema');
+// const fbise9math = require('./q_manager/questionSchema/QuestionSchema');
 // const convertEqsToSlide = require('./presentation_fn/convertEqsToSlide');
 
  async function slidesByTcode(tcode,id){

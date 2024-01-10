@@ -2,42 +2,48 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
-const slidesByTcode = require('./slidesByTcode.js');
-const updateSlidesByTcode = require('./updateSlidesByTcode.js');
+// const slidesByTcode = require('./slidesByTcode.js');
+const getModel = require('./getModel.js');
+// const updateSlidesByTcode = require('./updateSlidesByTcode.js');
 // const slidesByTcode = require('./slidesByTcode.js');
 const backEndRouter = express.Router();
-const {fbise9math} = require('./q_manager/questionSchema/QuestionSchema.js');
+// const {fbise9math} = require('./q_manager/questionSchema/QuestionSchema.js');
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
-// backEndRouter.use((req, res, next) => {
-//   // debugger;
-//   if (req.path === '/teacher_login') {
-//     // Skip verification for the /teacher_login route
-//     next();
-//   } else {
-//     const user = verify(req);
-//     if (user) {
-//       req.user = user;
-//           if(user.status === "admin"){
-//             req.isAdmin = true; //very important
-//           }else {
-//             req.isAdmin = false; //very important
-//           }
-//       next();
-//     } else {
-//       return res.status(403).json({ message: 'Unauthorized access' });
-//     }
-//   }
-// });
+backEndRouter.use((req, res, next) => {
+  // debugger;
+  if (req.path === '/teacher_login') {
+    // Skip verification for the /teacher_login route sine this path is for login of backend rest routes are used only after login. teacher_login is also for admin (but not for students)
+    next();
+  } else {
+    const user = verify(req);
+    if (user) {
+      req.user = user;
+          if(user.status === "admin"){
+            req.isAdmin = true; //very important
+          }else {
+            req.isAdmin = false; //very important
+          }
+      next();
+    } else {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+  }
+});
 
 
 ///////////////////////////////////////////////////////////////////////
 
-backEndRouter.get("/fbise_math9th_syllabus", async function (req, res) {
+backEndRouter.post("/syllabus", async function (req, res) {
    try {
   //  debugger;
- const questions = await fbise9math.find({}).select({
+  const tcode  = req.body.tcode; 
+  
+  if (!tcode) {return  res.status(400).json({ message: "missing data" }); }
+  const theMdl = await getModel(tcode);
+  if(!theMdl) { return res.status(404).json({ ok:false, message: "tcode not found" });}
+ const questions = await theMdl.find({}).select({
       classNo: 1,
       chapter: 1,
       board: 1,
@@ -67,9 +73,14 @@ backEndRouter.post("/update" , async function(req,res) {
   const presentation = req.body.presentation;
   const id  = presentation._id;
   const tcode  = req.body.tcode;
+  
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
   
-   const tf  = await updateSlidesByTcode(tcode,presentation,id);
+  const theMdl = await getModel(tcode);
+  if(!theMdl) { return res.status(404).json({ ok:false, message: "tcode not found" });}
+
+   const options = { new: false, upsert: false };
+   const tf  = await theMdl.findByIdAndUpdate(id,presentation, options);
       if (tf   ){
         return res.status(200).json({ message: 'success' });
       }else {
@@ -83,13 +94,15 @@ backEndRouter.post("/update" , async function(req,res) {
 ////////////////////////////////////////////////////////
 backEndRouter.post("/read" , async function(req,res) {
   try {
-  debugger;
+  // debugger;
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
   
-  //  const {slides,item}  = await slidesByTcode(tcode,id);
-   const item  = await fbise9math.findById(id).lean();
+   const theMdl = await getModel(tcode);
+  if(!theMdl) { return res.status(404).json({ ok:false, message: "tcode not found" });}
+
+   const item  = await theMdl.findById(id).lean();
       if (item !== null   ){
         return res.status(200).json({item});
       }else {
@@ -139,15 +152,6 @@ backEndRouter.post("/teacher_login", async function (req, res) {
 module.exports = backEndRouter;
 ////////////////////////////////////////////////////////
 
-function extractEmailPrefix(email) {
-    let atIndex = email.indexOf('@');
-    if (atIndex !== -1) {
-        return email.substring(0, atIndex);
-    } else {
-        return 'name not found';
-    }
-}
-
 function verify(req) {
  try {
   //  debugger;
@@ -163,24 +167,24 @@ function verify(req) {
   }
 }
 
-function verifyAdmin(req) {
- try {
-  //  debugger;
-    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
-    if (!token) {
-      return false;
-    }
-    const decodedUser = jwt.verify(token, process.env.JWT_SECRET);
-    if ( decodedUser.user.status !== "admin" ){
-      return false;
-    }else {
-      return decodedUser.user;
-    }
-  ///////////////////////  
-  } catch (error) {
-    return false;
-  }
-}
+// function verifyAdmin(req) {
+//  try {
+//   //  debugger;
+//     const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
+//     if (!token) {
+//       return false;
+//     }
+//     const decodedUser = jwt.verify(token, process.env.JWT_SECRET);
+//     if ( decodedUser.user.status !== "admin" ){
+//       return false;
+//     }else {
+//       return decodedUser.user;
+//     }
+//   ///////////////////////  
+//   } catch (error) {
+//     return false;
+//   }
+// }
 
 
 
