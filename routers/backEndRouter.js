@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const backEndRouter = express.Router();
-// const MathFullObj = require('../mathFull/MathFullObj.js');
+const MathFullObj = require('../mathFull/MathFullObj.js');
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
