@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const backEndRouter = express.Router();
-const MathFullObj = require('../mathFull/MathFullObj.js');
+// const MathFullObj = require('../mathFull/MathFullObj.js');
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
@@ -31,7 +31,7 @@ backEndRouter.use((req, res, next) => {
 /////////////////////////////////////////////////
 backEndRouter.post("/delete_question" , async function(req,res) {
   try {
-//  debugger;    
+ debugger;    
   const id  = req.body.id;
   const result = await MathFullObj.Delete(id)
       if (result.ok){
@@ -63,7 +63,7 @@ backEndRouter.post("/filled_by_me" , async function(req,res) {
 /////////////////////////////////////////////////
 backEndRouter.post("/new_question" , async function(req,res) {
   try {
-//  debugger;
+ debugger;
   const qData  = req.body.qData;
     const result = await MathFullObj.CreateQuestion( qData );
       if (result.ok  ){
