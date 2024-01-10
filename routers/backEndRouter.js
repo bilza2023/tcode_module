@@ -2,131 +2,104 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
+const slidesByTcode = require('./slidesByTcode.js');
+const updateSlidesByTcode = require('./updateSlidesByTcode.js');
+// const slidesByTcode = require('./slidesByTcode.js');
 const backEndRouter = express.Router();
-const MathFullObj = require('../mathFull/MathFullObj.js');
+const {fbise9math} = require('./q_manager/questionSchema/QuestionSchema.js');
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
-backEndRouter.use((req, res, next) => {
-  // debugger;
-  if (req.path === '/teacher_login') {
-    // Skip verification for the /teacher_login route
-    next();
-  } else {
-    const user = verify(req);
-    if (user) {
-      req.user = user;
-          if(user.status === "admin"){
-            req.isAdmin = true; //very important
-          }else {
-            req.isAdmin = false; //very important
-          }
-      next();
-    } else {
-      return res.status(403).json({ message: 'Unauthorized access' });
-    }
+// backEndRouter.use((req, res, next) => {
+//   // debugger;
+//   if (req.path === '/teacher_login') {
+//     // Skip verification for the /teacher_login route
+//     next();
+//   } else {
+//     const user = verify(req);
+//     if (user) {
+//       req.user = user;
+//           if(user.status === "admin"){
+//             req.isAdmin = true; //very important
+//           }else {
+//             req.isAdmin = false; //very important
+//           }
+//       next();
+//     } else {
+//       return res.status(403).json({ message: 'Unauthorized access' });
+//     }
+//   }
+// });
+
+
+///////////////////////////////////////////////////////////////////////
+
+backEndRouter.get("/fbise_math9th_syllabus", async function (req, res) {
+   try {
+  //  debugger;
+ const questions = await fbise9math.find({}).select({
+      classNo: 1,
+      chapter: 1,
+      board: 1,
+      exercise:1,
+      questionNo:1,
+      part:1,
+      name:1,
+      questionType: 1,
+      status: 1,
+      filename: 1,
+      filledBy:1
+    });
+
+      return res.status(200).json({ questions, message: "success",ok:true  });
+
+  } catch (error) {
+    console.error(error);
+     return res.status(500).json({ ok:false, message: "failed to load syllabus" });
+    // return res.status(500).json({ message: 'Unknown error!' });
   }
 });
 
-/////////////////////////////////////////////////
-backEndRouter.post("/delete_question" , async function(req,res) {
+////////////////////////////////////////////////////////
+backEndRouter.post("/update" , async function(req,res) {
   try {
- debugger;    
-  const id  = req.body.id;
-  const result = await MathFullObj.Delete(id)
-      if (result.ok){
-        return res.status(200).json({message : 'question deleted'  });
-      }  else {
-        return res.status(500).json({message : 'failed to delete'  });
+  debugger;
+  const presentation = req.body.presentation;
+  const id  = presentation._id;
+  const tcode  = req.body.tcode;
+  if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
+  
+   const tf  = await updateSlidesByTcode(tcode,presentation,id);
+      if (tf   ){
+        return res.status(200).json({ message: 'success' });
+      }else {
+        return res.status(404).json({ message: "failed to save" });
       }
 
   } catch(error) {
-    return res.status(400).json({msg : 'unknown error!'  });
-  }
-});
-/////////////////////////////////////////////////
-backEndRouter.post("/filled_by_me" , async function(req,res) {
-  try {
-  // debugger;
-  // const teacher_name  = req.body.teacher_name;
-  const filledBy = req.user.email;
-  const questions = await MathFullObj.Where( {filledBy} );
-      if (questions !== null   ){
-        return res.status(200).json({ questions:questions.questions, message: "success" });
-      } else {
-        return res.status(404).json({ message: "None found" });
-      }                  
-  } catch(error) {
-        return res.status(400).json({ message : 'unknown error!' });
-  }
-});
-/////////////////////////////////////////////////
-backEndRouter.post("/new_question" , async function(req,res) {
-  try {
- debugger;
-  const qData  = req.body.qData;
-    const result = await MathFullObj.CreateQuestion( qData );
-      if (result.ok  ){
-        return res.status(200).json({ question: result.question, message: "success" });
-      }else {
-        return res.status(404).json({ message: result.message });
-      }      
-            
-  } catch(error) {
     return res.status(400).json({message : 'unknown error!'  });
   }
 });
-///////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////
-backEndRouter.get("/get_question" , async function(req,res) {
+////////////////////////////////////////////////////////
+backEndRouter.post("/read" , async function(req,res) {
   try {
-// debugger;
-  const quizId  = req.query.id;
-  const isAdmin = req.isAdmin;
-    const result = await MathFullObj.Get( quizId );
-      if (result.ok  ){
-        return res.status(200).json({ question: result.question, message: "success",isAdmin });
+  debugger;
+  const id  = req.body.id;
+  const tcode  = req.body.tcode;
+  if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
+  
+  //  const {slides,item}  = await slidesByTcode(tcode,id);
+   const item  = await fbise9math.findById(id).lean();
+      if (item !== null   ){
+        return res.status(200).json({item});
       }else {
         return res.status(404).json({ message: "Not found" });
-      }      
-            
+      }
 
   } catch(error) {
     return res.status(400).json({message : 'unknown error!'  });
   }
 });
-///////////////////////////////////////////////////////////////////////
-backEndRouter.get("/genSyllabus", async function (req, res) {
-  try {
-  // debugger;
-    const result  = await MathFullObj.GetSyllabus();
-    if (result.ok){
-      return res.status(200).json({ questions :result.questions, message: "success",ok:true  });
-    }else {
-      return res.status(500).json({ ok:false, message: "failed to load syllabus" });
-    }
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Unknown error!' });
-  }
-});
-backEndRouter.get("/fbise_math9th_syllabus", async function (req, res) {
-  try {
-  // debugger;
-    const result  = await MathFullObj.GetSyllabus();
-    if (result.ok){
-      return res.status(200).json({ questions :result.questions, message: "success",ok:true  });
-    }else {
-      return res.status(500).json({ ok:false, message: "failed to load syllabus" });
-    }
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Unknown error!' });
-  }
-});
-
 ////////////////////////////////////////////////////////
 backEndRouter.post("/teacher_login", async function (req, res) {
   try {

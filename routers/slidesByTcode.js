@@ -1,20 +1,20 @@
-const Presentation = require('../../presentation/presentationSchema');
-const MathFullObj = require('../../mathFull/MathFullObj');
-const convertEqsToSlide = require('./convertEqsToSlide');
+// const Presentation = require('../presentation/presentationSchema');
+const fbise9math = require('./q_manager/questionSchema/QuestionSchema');
+// const convertEqsToSlide = require('./presentation_fn/convertEqsToSlide');
 
  async function slidesByTcode(tcode,id){
  let slides = null;
  let item = null;
     switch (tcode) {
         case 'pre':
-        const presentation = await Presentation.findById( id ).lean();
-        if (presentation){slides = presentation.slides; item = presentation}
+        // const presentation = await Presentation.findById( id ).lean();
+        // if (presentation){slides = presentation.slides; item = presentation}
         break;
 
         case 'fbise9math':
-        const resp = await MathFullObj.Get( id );
+         debugger;
+        const resp = await fbise9math.findById(id);
             if (resp){
-            // debugger;
             try{
             slides = resp.question.slides;
             item = resp.question;

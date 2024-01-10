@@ -1,7 +1,7 @@
 
 require('dotenv').config();
-const slidesByTcode = require('./presentation_fn/slidesByTcode.js');
-const updateSlidesByTcode = require('./presentation_fn/updateSlidesByTcode.js');
+const slidesByTcode = require('./slidesByTcode.js');
+const updateSlidesByTcode = require('./updateSlidesByTcode.js');
 
 const express = require('express');
 const presentationRouter = express.Router();

@@ -56,12 +56,12 @@ const SlidesSchema = new Schema({
 	},
     version:{ 
 	type:String ,
-	required:true ,
+	required:false ,
 	default : '0.0.0'
 	},//items compExtra template
     template:{ 
 	type:String ,
-	required:true ,
+	required:false ,
 	default : ''
 	},//  
     items:{ 
