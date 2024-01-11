@@ -9,33 +9,37 @@ const backEndRouter = express.Router();
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
-backEndRouter.use((req, res, next) => {
-//  debugger;
-  if (req.path === '/teacher_login') {
-    // Skip verification for the /teacher_login route sine this path is for login of backend rest routes are used only after login. teacher_login is also for admin (but not for students)
-    next();
-  } else {
-    const user = verify(req);
-    if (user) {
-      req.user = user;
-          if(user.status === "admin"){
-            req.isAdmin = true; //very important
-          }else {
-            req.isAdmin = false; //very important
-          }
-      next();
-    } else {
-      return res.status(403).json({ message: 'Unauthorized access,please login' });
-    }
-  }
-});
-
-
+// backEndRouter.use((req, res, next) => {
+// //  debugger;
+//   if (req.path === '/teacher_login') {
+//     // Skip verification for the /teacher_login route sine this path is for login of backend rest routes are used only after login. teacher_login is also for admin (but not for students)
+//     next();
+//   } else {
+//     const user = verify(req);
+//     if (user) {
+//       req.user = user;
+//           if(user.status === "admin"){
+//             req.isAdmin = true; //very important
+//           }else {
+//             req.isAdmin = false; //very important
+//           }
+//       next();
+//     } else {
+//       return res.status(403).json({ message: 'Unauthorized access,please login' });
+//     }
+//   }
+// });
 ///////////////////////////////////////////////////////////////////////
 
 backEndRouter.post("/syllabus", async function (req, res) {
    try {
-  //  debugger;
+   debugger;
+      /////////////////////////////////////
+      const verifyResp = verify(req); 
+      if(!verifyResp.ok){
+      return res.status(400).json({message:verifyResp.message})
+      }/////////////////////////////////////
+      
   const tcode  = req.body.tcode;
     // console.log('tcode:', tcode); 
   
@@ -64,11 +68,15 @@ backEndRouter.post("/syllabus", async function (req, res) {
     // return res.status(500).json({ message: 'Unknown error!' });
   }
 });
-
 ////////////////////////////////////////////////////////
 backEndRouter.post("/update" , async function(req,res) {
   try {
   debugger;
+  /////////////////////////////////////
+      const verifyResp = verify(req); 
+      if(!verifyResp.ok){
+      return res.status(400).json({message:verifyResp.message})
+      }/////////////////////////////////////
   const presentation = req.body.presentation;
   const id  = presentation._id;
   const tcode  = req.body.tcode;
@@ -94,6 +102,11 @@ backEndRouter.post("/update" , async function(req,res) {
 backEndRouter.post("/read" , async function(req,res) {
   try {
   debugger;
+  /////////////////////////////////////
+      const verifyResp = verify(req); 
+      if(!verifyResp.ok){
+      return res.status(400).json({message:verifyResp.message})
+      }/////////////////////////////////////
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
@@ -151,6 +164,11 @@ backEndRouter.post("/teacher_login", async function (req, res) {
 backEndRouter.post("/add_question" , async function(req,res) {
   try {
     debugger;
+    /////////////////////////////////////
+      const verifyResp = verify(req); 
+      if(!verifyResp.ok){
+      return res.status(400).json({message:verifyResp.message})
+      }/////////////////////////////////////
    const qData  = req.body.qData;
    const result = await addQuestion(qData);
     if (result.ok  ){
@@ -165,7 +183,13 @@ backEndRouter.post("/add_question" , async function(req,res) {
 ////////////////////////////////////////////////////////
 backEndRouter.post("/delete_question" , async function(req,res) {
   try {
- debugger;    
+  debugger;
+  /////////////////////////////////////
+      const verifyResp = verify(req); 
+      if(!verifyResp.ok){
+      return res.status(400).json({message:verifyResp.message})
+      }/////////////////////////////////////   
+
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
@@ -200,35 +224,17 @@ function verify(req) {
   //  debugger;
     const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
     if (!token) {
-      return res.status(403).json({ msg: "A token is required for authentication" });
+      return {ok:false, message:'missing Authorization token'};
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.user; // Add user to request object
-    return decoded.user;
+      if(req.user.status === "admin"){
+            req.isAdmin = true; //very important
+          }else {
+            req.isAdmin = false; //very important
+          }
+    return {ok:true};
   } catch (error) {
-    return false;
+    return {ok:false, message:'auth error'};
   }
 }
-
-// function verifyAdmin(req) {
-//  try {
-//   //  debugger;
-//     const token = req.headers.authorization.split(" ")[1]; // Extract the token from the 'Authorization' header
-//     if (!token) {
-//       return false;
-//     }
-//     const decodedUser = jwt.verify(token, process.env.JWT_SECRET);
-//     if ( decodedUser.user.status !== "admin" ){
-//       return false;
-//     }else {
-//       return decodedUser.user;
-//     }
-//   ///////////////////////  
-//   } catch (error) {
-//     return false;
-//   }
-// }
-
-
-
-
