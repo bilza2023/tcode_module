@@ -1,18 +1,16 @@
 require('dotenv').config();
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
-// const slidesByTcode = require('./slidesByTcode.js');
+const addQuestion = require('./addQuestion.js');
 const getModel = require('./getModel.js');
-// const updateSlidesByTcode = require('./updateSlidesByTcode.js');
-// const slidesByTcode = require('./slidesByTcode.js');
 const backEndRouter = express.Router();
-// const {fbise9math} = require('./q_manager/questionSchema/QuestionSchema.js');
 const Teacher = require("../models/teacher.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
 backEndRouter.use((req, res, next) => {
-  // debugger;
+//  debugger;
   if (req.path === '/teacher_login') {
     // Skip verification for the /teacher_login route sine this path is for login of backend rest routes are used only after login. teacher_login is also for admin (but not for students)
     next();
@@ -27,7 +25,7 @@ backEndRouter.use((req, res, next) => {
           }
       next();
     } else {
-      return res.status(403).json({ message: 'Unauthorized access' });
+      return res.status(403).json({ message: 'Unauthorized access,please login' });
     }
   }
 });
@@ -38,7 +36,8 @@ backEndRouter.use((req, res, next) => {
 backEndRouter.post("/syllabus", async function (req, res) {
    try {
   //  debugger;
-  const tcode  = req.body.tcode; 
+  const tcode  = req.body.tcode;
+    // console.log('tcode:', tcode); 
   
   if (!tcode) {return  res.status(400).json({ message: "missing data" }); }
   const theMdl = await getModel(tcode);
@@ -94,7 +93,7 @@ backEndRouter.post("/update" , async function(req,res) {
 ////////////////////////////////////////////////////////
 backEndRouter.post("/read" , async function(req,res) {
   try {
-  // debugger;
+  debugger;
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
@@ -149,7 +148,51 @@ backEndRouter.post("/teacher_login", async function (req, res) {
   }
 });
 ////////////////////////////////////////////////////////
+backEndRouter.post("/add_question" , async function(req,res) {
+  try {
+    debugger;
+   const qData  = req.body.qData;
+   const result = await addQuestion(qData);
+    if (result.ok  ){
+      return res.status(200).json({ question: result.question, message: "success" });
+    }else {
+      return res.status(404).json({ message: result.message });
+    }                  
+  } catch(error) {
+    return res.status(400).json({message : 'unknown error!'  });
+  }
+});
+////////////////////////////////////////////////////////
+backEndRouter.post("/delete_question" , async function(req,res) {
+  try {
+ debugger;    
+  const id  = req.body.id;
+  const tcode  = req.body.tcode;
+  if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
+  
+   const theMdl = await getModel(tcode);
+  if(!theMdl) { return res.status(404).json({ ok:false, message: "tcode not found" });}
+
+   let objectId = new mongoose.Types.ObjectId(id);
+     const question = await theMdl.findById(objectId );    
+     if (!question){
+        return res.status(404).json({message : "question not found"});
+     }
+     if (question.slides.length > 0){
+            return res.status(400).json({message : "question has content"});
+     }
+     
+     await theMdl.findByIdAndRemove(objectId );    
+     return res.status(200).json({message : 'question deleted'  });
+      
+  } catch(error) {
+    return res.status(400).json({msg : 'unknown error!'  });
+  }
+});
+////////////////////////////////////////////////////////
 module.exports = backEndRouter;
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 
 function verify(req) {
