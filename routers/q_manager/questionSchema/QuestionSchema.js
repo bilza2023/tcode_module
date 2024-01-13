@@ -105,5 +105,6 @@ required:false ,
 const fbise9math = mongoose.model('fbise9math', QuestionSchema);
 const fbise10math = mongoose.model('fbise10math', QuestionSchema);
 const fbise8math = mongoose.model('fbise8math', QuestionSchema);
+const experimental = mongoose.model('experimental', QuestionSchema);
 
-module.exports = {QuestionSchema,fbise9math,fbise10math,fbise8math};
+module.exports = {QuestionSchema,fbise9math,fbise10math,fbise8math,experimental};

@@ -1,6 +1,5 @@
 
-const {fbise9math,fbise10math,fbise8math} = require('./q_manager/questionSchema/QuestionSchema.js');
-
+const {fbise9math,fbise10math,fbise8math,experimental} = require('./q_manager/questionSchema/QuestionSchema.js');
 
 
 async function getModel(tcode){
@@ -12,11 +11,15 @@ async function getModel(tcode){
         case 'fbise9math':
             return fbise9math;
             break;
-            
+        
         case 'fbise10math':
             return fbise10math;
             break;
-    
+            
+    //new 2024-jan-13
+        case 'experimental':
+            return experimental;
+            break;
         default:
             return false;
         break;
