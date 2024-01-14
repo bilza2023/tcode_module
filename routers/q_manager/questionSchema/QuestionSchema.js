@@ -4,15 +4,15 @@ const SlidesSchema = require('./slidesSchema');
 
 ///////////////////////////////////////////
 const QuestionSchema = new Schema({
-  board: { // Board name, can be one of the specified values
-    type: String,
-    enum: ['Punjab', 'Pakhtoonkhwa', 'Sind', 'Balochistan', 'FBISE'],
-    required: true
-  },
-  classNo: { // Class number
-    type: Number,
-    required:true,
-  },
+  // board: { // Board name, can be one of the specified values
+  //   type: String,
+  //   enum: ['Punjab', 'Pakhtoonkhwa', 'Sind', 'Balochistan', 'FBISE'],
+  //   required: true
+  // },
+  // classNo: { // Class number
+  //   type: Number,
+  //   required:true,
+  // },
   chapter:{ // Chapter number 
 	type:Number ,
 	required:true , 
@@ -106,5 +106,6 @@ const fbise9math = mongoose.model('fbise9math', QuestionSchema);
 const fbise10math = mongoose.model('fbise10math', QuestionSchema);
 const fbise8math = mongoose.model('fbise8math', QuestionSchema);
 const experimental = mongoose.model('experimental', QuestionSchema);
+const fbise9english = mongoose.model('fbise9english', QuestionSchema);
 
-module.exports = {QuestionSchema,fbise9math,fbise10math,fbise8math,experimental};
+module.exports = {QuestionSchema,fbise9math,fbise10math,fbise8math,experimental,fbise9english};

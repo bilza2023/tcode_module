@@ -3,27 +3,22 @@ const getModel = require('./getModel.js');
 
 async function addQuestion(qData){
 try{
-     //-11 items ===DONT DELETE  
-    // 1: board 
-    if(!inarray(qData.board, ['Punjab', 'Pakhtoonkhwa', 'Sind', 'Balochistan', 'FBISE'])){
-        return {ok:false, message:'board name not found'};
-    }
+ debugger;
    
     // 3: questionType
     qData.questionType = 'paid';
     // 4: status 
     qData.status = 'empty'; 
-    // 5: classNo    
-    if(!shouldBePositiveNumber(qData.classNo)){
-        return {ok:false, message:'Class number must be a positive number'};
-    }
-    // 6: chapter 
+      // 6: chapter 
     qData.chapter = parseInt(qData.chapter);
     if(!shouldBePositiveNumber(qData.chapter)){
         return {ok:false, message:'Chapter must be a positive number'};
     }
 
    //7 : check name for url safe
+    if(qData.name && qData.name !== ''){
+         qData.name = qData.name.replace(/ /g, '_');
+    }
     // 8 : exercise
     if(!checkString(qData.exercise)){
         return {ok:false, message:'Exercise must be a string'};
@@ -38,9 +33,10 @@ try{
     }
 
 //==checking done now prep the question
-     const newQuestion =  {
-        board : qData.board,
-        classNo : qData.classNo,
+     const newQuestion =  { 
+     //no need to place qData.tcode here in question
+        // board : qData.board,
+        // classNo : qData.classNo,
         chapter : qData.chapter,
         exercise : qData.exercise,
         questionNo : qData.questionNo ,
@@ -57,7 +53,7 @@ try{
     };
     debugger;
 
-    getFilename(newQuestion) //last step no 11
+    getFilename(newQuestion,qData.tcode) //last step no 11
 
 //===now save question in appropriate collection
   const tcode  = qData.tcode; 
@@ -88,22 +84,18 @@ function checkString(name){
     }
     return true; // Name is valid
 }
-
-function getFilename(question){
+//so simple if has name attach it if not dont. no matter even if question no and part still attach them . every syllabus page layout should know this rule
+function getFilename(question,tcode){
 if (question.name &&  question.name !== ''){    
     //even if there is a name the questionNo and part ==0
-    question.filename = `${question.board.toLowerCase()}_cl_${question.classNo}_ch_${question.chapter}_ex_${question.exercise}_q_${question.questionNo}_pt_${question.part}_${question.name}`;
+    question.filename = `${tcode}_ch_${question.chapter}_ex_${question.exercise}_q_${question.questionNo}_pt_${question.part}_${question.name}`;
     
 }else {
-    question.filename = `${question.board.toLowerCase()}_cl_${question.classNo}_ch_${question.chapter}_ex_${question.exercise}_q_${question.questionNo}_pt_${question.part}`;
+    question.filename = `${tcode}_ch_${question.chapter}_ex_${question.exercise}_q_${question.questionNo}_pt_${question.part}`;
  }
 }
 
 
 function shouldBePositiveNumber(value) {
     return Number.isInteger(value) && value > 0;
-}
-
-function inarray(value, array) {
-    return array.includes(value);
 }

@@ -30,7 +30,6 @@ const Teacher = require("../models/teacher.js");
 //   }
 // });
 ///////////////////////////////////////////////////////////////////////
-
 backEndRouter.post("/syllabus", async function (req, res) {
    try {
    debugger;
@@ -131,7 +130,6 @@ backEndRouter.post("/teacher_login", async function (req, res) {
   // debugger;
     const email = req.body.email;
     const passwordPlain = req.body.password;
-
     // Input validation
     if (!email || !passwordPlain) {
       return res.status(400).json({ message: "Email and password are required" });
