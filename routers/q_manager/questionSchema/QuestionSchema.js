@@ -107,5 +107,6 @@ const fbise10math = mongoose.model('fbise10math', QuestionSchema);
 const fbise8math = mongoose.model('fbise8math', QuestionSchema);
 const experimental = mongoose.model('experimental', QuestionSchema);
 const fbise9english = mongoose.model('fbise9english', QuestionSchema);
+const matrices = mongoose.model('matrices', QuestionSchema);
 
-module.exports = {QuestionSchema,fbise9math,fbise10math,fbise8math,experimental,fbise9english};
+module.exports = {QuestionSchema,fbise9math,fbise10math,fbise8math,experimental,fbise9english,matrices};
