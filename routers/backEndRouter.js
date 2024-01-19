@@ -50,6 +50,7 @@ backEndRouter.post("/syllabus", async function (req, res) {
       chapter: 1,
       board: 1,
       exercise:1,
+      sortOrder:1,
       questionNo:1,
       part:1,
       name:1,
@@ -197,21 +198,21 @@ backEndRouter.post("/copy_question" , async function(req,res) {
   if (!idFrom || !tcodeFrom) {return  res.status(400).json({ message: "missing data" }); }
 
    const theMdlFrom = await getModel(tcodeFrom);
-  if(!theMdlFrom) { return res.status(404).json({ ok:false, message: "tcode From not found" });}
+   if(!theMdlFrom) { return res.status(404).json({ ok:false, message: "tcode From not found" });}
     let objectId = new mongoose.Types.ObjectId(idFrom);
     const question = await theMdlFrom.findById(objectId );    
      if (!question){
         return res.status(404).json({message : "question not found"});
      }
- const theMdlTo = await getModel(tcodeTo);
+  const theMdlTo = await getModel(tcodeTo);
   if(!theMdlTo) { return res.status(404).json({ ok:false, message: "tcode From not found" });}
   debugger;
- let objectIdTo = new mongoose.Types.ObjectId(idTo);
- const questionTo = await theMdlTo.findById(objectIdTo ); 
- if (!questionTo){
+  let objectIdTo = new mongoose.Types.ObjectId(idTo);
+  const questionTo = await theMdlTo.findById(objectIdTo ); 
+  if (!questionTo){
         return res.status(404).json({message : "question not found"});
      }
-questionTo.slides = question.slides;
+ questionTo.slides = question.slides;
   const options = { new: false, upsert: false };
    const tf  = await theMdlTo.findByIdAndUpdate(objectIdTo,questionTo, options);
       if (tf   ){
