@@ -32,7 +32,7 @@ const Teacher = require("../models/teacher.js");
 ///////////////////////////////////////////////////////////////////////
 backEndRouter.post("/syllabus", async function (req, res) {
    try {
-   debugger;
+  //  debugger;
       /////////////////////////////////////
       const verifyResp = verify(req); 
       if(!verifyResp.ok){
@@ -100,7 +100,7 @@ backEndRouter.post("/update" , async function(req,res) {
 ////////////////////////////////////////////////////////
 backEndRouter.post("/read" , async function(req,res) {
   try {
-  debugger;
+  //debugger;
   /////////////////////////////////////
       const verifyResp = verify(req); 
       if(!verifyResp.ok){
@@ -179,15 +179,61 @@ backEndRouter.post("/add_question" , async function(req,res) {
   }
 });
 ////////////////////////////////////////////////////////
+backEndRouter.post("/copy_question" , async function(req,res) {
+ try{
+   /////////////////////////////////////
+    const verifyResp = verify(req); 
+    if(!verifyResp.ok){
+    return res.status(400).json({message:verifyResp.message})
+    }/////////////////////////////////////   
+
+  const idFrom  = req.body.idFrom;
+  const idTo  = req.body.idTo;
+  const tcodeFrom  = req.body.tcodeFrom;
+  const tcodeTo  = req.body.tcodeTo;
+
+  if (!idTo || !tcodeTo) {return res.status(400).json({ message: "missing data" }); }
+
+  if (!idFrom || !tcodeFrom) {return  res.status(400).json({ message: "missing data" }); }
+
+   const theMdlFrom = await getModel(tcodeFrom);
+  if(!theMdlFrom) { return res.status(404).json({ ok:false, message: "tcode From not found" });}
+    let objectId = new mongoose.Types.ObjectId(idFrom);
+    const question = await theMdlFrom.findById(objectId );    
+     if (!question){
+        return res.status(404).json({message : "question not found"});
+     }
+ const theMdlTo = await getModel(tcodeTo);
+  if(!theMdlTo) { return res.status(404).json({ ok:false, message: "tcode From not found" });}
+  debugger;
+ let objectIdTo = new mongoose.Types.ObjectId(idTo);
+ const questionTo = await theMdlTo.findById(objectIdTo ); 
+ if (!questionTo){
+        return res.status(404).json({message : "question not found"});
+     }
+questionTo.slides = question.slides;
+  const options = { new: false, upsert: false };
+   const tf  = await theMdlTo.findByIdAndUpdate(objectIdTo,questionTo, options);
+      if (tf   ){
+        return res.status(200).json({ message: 'success' });
+      }else {
+        return res.status(404).json({ message: "failed to save" });
+      }
+
+ }catch(e){
+  return res.status(400).json({msg : 'unknown error!'  });
+ }
+});
+////////////////////////////////////////////////////////
 backEndRouter.post("/delete_question" , async function(req,res) {
   try {
-  debugger;
+  
   /////////////////////////////////////
       const verifyResp = verify(req); 
       if(!verifyResp.ok){
       return res.status(400).json({message:verifyResp.message})
       }/////////////////////////////////////   
-
+debugger;
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
@@ -236,3 +282,4 @@ function verify(req) {
     return {ok:false, message:'auth error'};
   }
 }
+//65a2724608f47d00c9267a31,65aa9f91d403c62292b316bd
