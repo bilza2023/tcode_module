@@ -7,6 +7,7 @@ const addQuestion = require('./addQuestion.js');
 const getModel = require('./getModel.js');
 const backEndRouter = express.Router();
 const Teacher = require("../models/teacher.js");
+const add = require("../sdk.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
 // backEndRouter.use((req, res, next) => {
@@ -258,6 +259,13 @@ debugger;
     return res.status(400).json({msg : 'unknown error!'  });
   }
 });
+////////////////////////////////////////////////////////
+backEndRouter.get("/add" , async function(req,res) {
+  
+  const r = await add();
+
+  res.status(500).json({success :true ,  message : r});
+  });
 ////////////////////////////////////////////////////////
 module.exports = backEndRouter;
 ////////////////////////////////////////////////////////
