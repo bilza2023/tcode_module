@@ -261,10 +261,10 @@ debugger;
 });
 ////////////////////////////////////////////////////////
 backEndRouter.get("/add" , async function(req,res) {
-  
+  debugger;
   const r = await add();
 
-  res.status(500).json({success :true ,  message : r});
+  res.status(200).json({success :true ,  message : r});
   });
 ////////////////////////////////////////////////////////
 module.exports = backEndRouter;
