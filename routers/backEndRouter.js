@@ -7,7 +7,7 @@ const addQuestion = require('./addQuestion.js');
 const getModel = require('./getModel.js');
 const backEndRouter = express.Router();
 const Teacher = require("../models/teacher.js");
-const add = require("../sdk.js");
+const sendGmail = require("../gmail.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
 // backEndRouter.use((req, res, next) => {
@@ -129,7 +129,7 @@ backEndRouter.post("/read" , async function(req,res) {
 ////////////////////////////////////////////////////////
 backEndRouter.post("/teacher_login", async function (req, res) {
   try {
-  // debugger;
+  debugger;
     const email = req.body.email;
     const passwordPlain = req.body.password;
     // Input validation
@@ -160,6 +160,37 @@ backEndRouter.post("/teacher_login", async function (req, res) {
     return res.status(500).json({  msg: "Login failed", error });
   }
 });
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+backEndRouter.post("/teacher_signup", async function (req, res) {
+  try {
+    const email = req.body.email;
+    const passwordPlain = req.body.password;
+    // Input validation
+    if (!email || !passwordPlain) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const user = await Teacher.findOne({ email });
+    if (user) {
+      return res.status(404).json({ message: "This Email already exists" });
+    }
+    debugger;
+    const hashedPassword = await bcrypt.hash(passwordPlain, 2);
+    const data = {email, password: hashedPassword, status: 'teacher'}
+
+    const newuser = await Teacher.create(data);
+    if(newuser){
+      await sendGmail(email);
+      return res.status(200).json({  message: "your account has been created" });
+    } else {
+      return res.status(500).json({  message: "signup failed"});
+    }
+  } catch (error) {
+    return res.status(500).json({  msg: "signup failed", error });
+  }
+});
+
 ////////////////////////////////////////////////////////
 backEndRouter.post("/add_question" , async function(req,res) {
   try {
@@ -262,7 +293,7 @@ debugger;
 ////////////////////////////////////////////////////////
 backEndRouter.get("/add" , async function(req,res) {
   debugger;
-  const r = await add();
+  // const r = await sendEmail();
 
   res.status(200).json({success :true ,  message : r});
   });

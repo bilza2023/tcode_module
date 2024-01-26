@@ -10,7 +10,7 @@ const cors = require('cors');
 const db = require("./mongoDb/mongo.js");
 /////////////////////////////////////////////----->>>>
 const backEndRouter = require('./routers/backEndRouter.js');
-// const frontEndRouter = require('./routers/frontEndRouter.js');
+const registeration = require('./routers/registeration.js');
 // const presentationRouter = require('./routers/presentationRouter.js');
 // const qManagerRouter = require('./routers/q_manager/qManagerRouter.js');
 ////////////////////////////////////////////////
@@ -27,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //.. Route middlewares--/////////////////////////////////////
 app.use("/be",backEndRouter);
+app.use("/auth",registeration);
 // app.use("/fe",frontEndRouter);
 // app.use("/pre",presentationRouter);
 // app.use("/q",qManagerRouter);
