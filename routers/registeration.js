@@ -10,7 +10,7 @@ const Student = require("../models/student.js");
 const sendGmail = require("../gmail.js");
 const { v4: uuid } = require('uuid');
 ////////////////////////////////////////////////////////
-registeration.post("/teacher_login", async function (req, res) {
+registeration.post("/login", async function (req, res) {
   try {
   debugger;
     const email = req.body.email;
@@ -20,7 +20,7 @@ registeration.post("/teacher_login", async function (req, res) {
       return res.status(400).json({ message: "Email and password are required" });
     }
     // if there is no status in the table it will return "teacher" as per the default in the Schema
-    const user = await Teacher.findOne({ email });
+    const user = await Student.findOne({ email });
     // console.log("user", user);
     if (user == null) {
       return res.status(404).json({ msg: "Email address not found" });
