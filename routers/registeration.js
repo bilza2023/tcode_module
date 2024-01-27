@@ -3,13 +3,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
-const addQuestion = require('./addQuestion.js');
-const getModel = require('./getModel.js');
 const registeration = express.Router();
 const Student = require("../models/student.js");
 const sendGmail = require("../gmail.js");
 const { v4: uuid } = require('uuid');
 ////////////////////////////////////////////////////////
+//-updated on 27-jan-2024
 registeration.post("/login", async function (req, res) {
   try {
   debugger;
@@ -19,33 +18,35 @@ registeration.post("/login", async function (req, res) {
     if (!email || !passwordPlain) {
       return res.status(400).json({ message: "Email and password are required" });
     }
-    // if there is no status in the table it will return "teacher" as per the default in the Schema
+   //-check if the user exists
     const user = await Student.findOne({ email });
-    // console.log("user", user);
     if (user == null) {
-      return res.status(404).json({ msg: "Email address not found" });
+      return res.status(404).json({ message: "Email address not found" });
     }
-
-    if (await bcrypt.compare(passwordPlain, user.password)) {
-      const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-    const status = user.status;
-    // const teacher_name = extractEmailPrefix(email);
-    const teacher_name = email ;
-
-    res.set("Authorization", `Bearer ${token}`);
-    return res.status(200).json({ message: "Login successful", token: token ,status,teacher_name});
-    } else {
-      return res.status(401).json({  msg: "Invalid email or password" });
+    if (user.verified == false) {
+      return res.status(404).json({ message: "Your account is not verified",errorcode: "AccountNotVerified" });
     }
+    // encrypt incomming password to compare
+  if (bcrypt.compare(passwordPlain, user.password)) {
+        const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+      // const status = user.status;
+      // const email = email ;
+
+      res.set("Authorization", `Bearer ${token}`);
+      return res.status(200).json({ message: "Login successful", token: token ,email});
+  } else {
+      return res.status(401).json({  message: "Invalid email or password" });
+  }
+  
   } catch (error) {
-    // console.log(error);
-    return res.status(500).json({  msg: "Login failed", error });
+    return res.status(500).json({  message: "Login failed", error });
   }
 });
 ////////////////////////////////////////////////////////
 registeration.post("/signup", async function (req, res) {
   try {
+   debugger;
     const email = req.body.email;
     const passwordPlain = req.body.password;
     // Input validation
@@ -74,6 +75,77 @@ registeration.post("/signup", async function (req, res) {
   }
 });
 
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+registeration.get("/purchase", async function (req, res) {
+  try {
+   debugger;
+    // const email = req.query.email;
+    const email = 'bilza2023@gmail.com';
+    // const passwordPlain = req.body.password;
+    // Input validation
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await Student.findOne({ email }).lean();
+    const purchases = user.purchases;
+
+    const startDate =  new Date();
+    let endDate = new Date(startDate.getTime());
+    endDate.setFullYear(endDate.getFullYear() + 1); // Add one year
+    
+    purchases.push({tcode: 'fbise9math' , startDate , endDate}) 
+    
+    user.purchases = purchases;
+     const options = { new: false, upsert: false };
+     const tf  = await Student.findByIdAndUpdate(user._id,user, options);
+      if (tf   ){
+        return res.status(200).json({ message: 'success' });
+      }else {
+        return res.status(404).json({ message: "failed to verify" });
+      }
+
+
+  } catch (error) {
+    return res.status(500).json({  message: "signup failed", error });
+  }
+});
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+registeration.post("/ispaid", async function (req, res) {
+  try {
+  //  debugger;
+    const email = req.body.email;
+    const tcode = req.body.tcode;
+    // const email = 'bilza2023@gmail.com';
+    // const tcode = 'fbise9math';
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await Student.findOne({ email }).lean();
+    const today = new Date();
+    const purchases = user.purchases;
+
+    for (let i = 0; i < purchases.length; i++) {
+      const element = purchases[i];
+        if (element.tcode === tcode){
+
+                if(element.endDate.getTime() > today.getTime()){
+                return res.status(200).json({allowed:true });
+                }else{
+                // console.log("Allowed");
+                return res.status(404).json({allowed:false });
+                }
+        }
+    }
+        return res.status(404).json({ message: "failed to verify",allowed:false });
+
+  } catch (error) {
+    return res.status(500).json({  message: "signup failed", error });
+  }
+});
 ////////////////////////////////////////////////////////
 registeration.get("/verify", async function (req, res) {
   try {

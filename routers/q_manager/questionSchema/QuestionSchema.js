@@ -4,26 +4,11 @@ const SlidesSchema = require('./slidesSchema');
 
 ///////////////////////////////////////////
 const QuestionSchema = new Schema({
-  // board: { // Board name, can be one of the specified values
-  //   type: String,
-  //   enum: ['Punjab', 'Pakhtoonkhwa', 'Sind', 'Balochistan', 'FBISE'],
-  //   required: true
-  // },
-  // classNo: { // Class number
-  //   type: Number,
-  //   required:true,
-  // },
+ 
   chapter:{ // Chapter number 
 	type:Number ,
 	required:true , 
 	},
-
-//there is no need for isSpecial just create a new exercise name is "zero or concepts or special" and add it to a chapter, since exercise named are strings. Regarding name you can give name to any of the question and if it has name show it elde show question no and part
-// isSpecial:{ 
-// type:Boolean ,
-// required:true ,
-// default:false
-// },	
 
 exercise:{ 
 type:String ,

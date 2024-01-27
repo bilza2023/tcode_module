@@ -2,6 +2,21 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const purchasesSchema = new Schema({
+tcode: { 
+    type: String,
+    required: true,
+  },
+startDate: { 
+    type: Date,
+    required: true,
+  },
+endDate: { 
+    type: Date,
+    required: true,
+  }
+
+});
 const studentSchema = new Schema({
   email: { 
     type: String,
@@ -12,21 +27,21 @@ const studentSchema = new Schema({
     type: Boolean,
     required: true,
     default: false
-  },
+  }, 
   createdAt: { 
     type: Date,
     required: true,
     default: Date.now
   },
+  purchases: {
+  type: [purchasesSchema],
+  required: true,
+  default : []
+  },
+
   verificationId: { 
     type: String,
     required: false
-  },
-  status: { 
-    type: String,
-    required: false,
-    enum : ['free', 'paid'],
-    default : 'free'
   },
   password: {
     type: String,
