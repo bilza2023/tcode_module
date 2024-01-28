@@ -77,45 +77,46 @@ registeration.post("/signup", async function (req, res) {
 
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
-registeration.get("/purchase", async function (req, res) {
-  try {
-   debugger;
-    // const email = req.query.email;
-    const email = 'bilza2023@gmail.com';
-    // const passwordPlain = req.body.password;
-    // Input validation
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
+// registeration.get("/purchase", async function (req, res) {
+//   try {
+   
+//     // const email = req.query.email;
+//     const email = 'bilza2023@gmail.com';
+//     const tcode = 'fbise9math';
+//     // const passwordPlain = req.body.password;
+//     // Input validation
+//     if (!email) {
+//       return res.status(400).json({ message: "Email is required" });
+//     }
 
-    const user = await Student.findOne({ email }).lean();
-    const purchases = user.purchases;
-
-    const startDate =  new Date();
-    let endDate = new Date(startDate.getTime());
-    endDate.setFullYear(endDate.getFullYear() + 1); // Add one year
+//     const user = await Student.findOne({ email }).lean();
+//     const purchases = user.purchases;
+//     debugger; 
+//     const startDate =  new Date();
+//     let endDate = new Date(startDate.getTime());
+//     endDate.setFullYear(endDate.getFullYear() + 1); // Add one year
     
-    purchases.push({tcode: 'fbise9math' , startDate , endDate}) 
+//     purchases.push({tcode , startDate:new Date() , endDate}) 
     
-    user.purchases = purchases;
-     const options = { new: false, upsert: false };
-     const tf  = await Student.findByIdAndUpdate(user._id,user, options);
-      if (tf   ){
-        return res.status(200).json({ message: 'success' });
-      }else {
-        return res.status(404).json({ message: "failed to verify" });
-      }
+//     user.purchases = purchases;
+//      const options = { new: false, upsert: false };
+//      const tf  = await Student.findByIdAndUpdate(user._id,user, options);
+//       if (tf   ){
+//         return res.status(200).json({ message: 'success' });
+//       }else {
+//         return res.status(404).json({ message: "failed to verify" });
+//       }
 
 
-  } catch (error) {
-    return res.status(500).json({  message: "signup failed", error });
-  }
-});
+//   } catch (error) {
+//     return res.status(500).json({  message: "purchase failed", error });
+//   }
+// });
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 registeration.post("/ispaid", async function (req, res) {
   try {
-  //  debugger;
+   debugger;
     const email = req.body.email;
     const tcode = req.body.tcode;
     // const email = 'bilza2023@gmail.com';
