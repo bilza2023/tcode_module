@@ -1,5 +1,5 @@
 require('dotenv').config();
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
@@ -7,7 +7,7 @@ const registeration = express.Router();
 const Student = require("../models/student.js");
 const sendGmail = require("../gmail.js");
 const { v4: uuid } = require('uuid');
-////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////// 
 //-updated on 27-jan-2024
 registeration.post("/login", async function (req, res) {
   try {
