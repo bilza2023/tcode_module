@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const SlidesSchema = require('./slidesSchema');
 /**
+ =========================== TcodeSchema =======================
  1 : board              : ['bisep', 'fbise'],
  2 : classNo            : Number , required
  3 : filename           : String - required - unique

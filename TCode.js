@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-class TCodeObj {
+class TCode {
   constructor(model) {
     this.model = model;
   }
@@ -275,7 +275,7 @@ async getExercise(exerciseString) {
 
 }//questions
 
-module.exports = TCodeObj;
+module.exports = TCode;
 
 function getFilename(question,tcode){
   let filename = tcode;
