@@ -1,31 +1,51 @@
 require('dotenv').config();
 const path = require('path');
+const mongoose = require("mongoose");
 const db = require("./mongoDb/mongo.js");
-const { MathFull } = require("./mathFull/mathFull.js");
+const TCodeSchema = require('./tCodeModule/TCodeSchema.js');
+const fbise9math = mongoose.model('fbise9math', TCodeSchema);
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Promise Rejection:', reason);
-});
 
-db.once('open', () => {
+db.once('open', async () => {
   console.log("MongoDb ===> connection established");
-
-  async function run() {
-    const options = { new: false, upsert: false };
-    const questions = await MathFull.find({});
-
-    for (let i = 0; i < questions.length; i++) {
-      const question = questions[i];
-     
-      question.grid = {};
-      question.egs = [];
-      await MathFull.findByIdAndUpdate(question._id,question, options);
-      console.log(i);
-    } 
-    
-    console.log("done..");
-    process.exit(1);
-  }
-
-  run();
+  await run();
 });
+
+//////////////////////////////////////
+async function run() {
+  // const options = { new: false, upsert: false };
+  // Define a model without a strict schema
+  // const fbise9math = mongoose.model('fbise9math', new mongoose.Schema({}, { strict: false }));
+  const documents = await fbise9math.find({});
+  console.log(documents);
+
+  // const result = await fbise9math.deleteMany({ slides: { $size: 0 } });
+  // console.log(`${result.deletedCount} document(s) deleted`);
+  const result = await fbise9math.updateMany({}, { $set: { board: "fbise" } });
+  console.log(`${result.modifiedCount} document(s) updated`);
+}
+
+
+async function getFilename(question,tcode){
+  let filename = tcode;
+
+  if (question.chapter){    
+    filename +=  `_ch_${question.chapter}`
+  }
+  if (question.exercise){    
+    filename +=  `_ex_${question.exercise}`
+  }
+  if (question.questionNo){    
+    filename +=  `_q_${question.questionNo}`
+  }
+  if (question.part){    
+    filename +=  `_pt_${question.part}`
+  }
+  if (question.name){    
+    filename +=  `_n_${question.name}`
+  }
+  ////////////////////////////////////
+  question.filename = filename;
+  ////////////////////////////////////
+
+  }

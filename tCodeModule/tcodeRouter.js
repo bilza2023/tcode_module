@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
-const addQuestion = require('./addQuestion.js');
+// const addQuestion = require('./addQuestion.js');
 const getModel = require('./getModel.js');
-const backEndRouter = express.Router();
-const Teacher = require("../models/teacher.js");
-const sendGmail = require("../gmail.js");
+const TCodeRouter = express.Router();
+
+// const sendGmail = require("../gmail.js");
 /////////////////////////////////////////////////
 //////////////////////////////////
-// backEndRouter.use((req, res, next) => {
+// TCodeRouter.use((req, res, next) => {
 // //  debugger;
 //   if (req.path === '/teacher_login') {
 //     // Skip verification for the /teacher_login route sine this path is for login of backend rest routes are used only after login. teacher_login is also for admin (but not for students)
@@ -31,35 +31,15 @@ const sendGmail = require("../gmail.js");
 //   }
 // });
 ///////////////////////////////////////////////////////////////////////
-backEndRouter.post("/syllabus", async function (req, res) {
+TCodeRouter.post("/syllabus", async function (req, res) {
    try {
-  //  debugger;
-      /////////////////////////////////////
-      const verifyResp = verify(req); 
-      if(!verifyResp.ok){
-      return res.status(400).json({message:verifyResp.message})
-      }/////////////////////////////////////
-      
+   debugger;
   const tcode  = req.body.tcode;
-    // console.log('tcode:', tcode); 
   
   if (!tcode) {return  res.status(400).json({ message: "missing data" }); }
   const theMdl = await getModel(tcode);
   if(!theMdl) { return res.status(404).json({ ok:false, message: "tcode not found" });}
- const questions = await theMdl.find({}).select({
-      classNo: 1,
-      chapter: 1,
-      board: 1,
-      exercise:1,
-      sortOrder:1,
-      questionNo:1,
-      part:1,
-      name:1,
-      questionType: 1,
-      status: 1,
-      filename: 1,
-      filledBy:1
-    });
+ const questions = await theMdl.getSyllabus();
 
       return res.status(200).json({ questions, message: "success",ok:true  });
 
@@ -70,25 +50,26 @@ backEndRouter.post("/syllabus", async function (req, res) {
   }
 });
 ////////////////////////////////////////////////////////
-backEndRouter.post("/update" , async function(req,res) {
+TCodeRouter.post("/update" , async function(req,res) {
   try {
   debugger;
   /////////////////////////////////////
-      const verifyResp = verify(req); 
-      if(!verifyResp.ok){
-      return res.status(400).json({message:verifyResp.message})
-      }/////////////////////////////////////
-  const presentation = req.body.presentation;
-  const id  = presentation._id;
+      // const verifyResp = verify(req); 
+      // if(!verifyResp.ok){
+      // return res.status(400).json({message:verifyResp.message})
+      // }/////////////////////////////////////
+  // const presentation = req.body.presentation;
+  //659fab981913b0d8e22fd88e
+  const question  = req.body.question;
   const tcode  = req.body.tcode;
   
-  if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
+  if (!question || !tcode) {return  res.status(400).json({ message: "missing data" }); }
   
   const theMdl = await getModel(tcode);
   if(!theMdl) { return res.status(404).json({ ok:false, message: "tcode not found" });}
 
-   const options = { new: false, upsert: false };
-   const tf  = await theMdl.findByIdAndUpdate(id,presentation, options);
+  //  const options = { new: false, upsert: false };
+   const tf  = await theMdl.update(question);
       if (tf   ){
         return res.status(200).json({ message: 'success' });
       }else {
@@ -100,14 +81,14 @@ backEndRouter.post("/update" , async function(req,res) {
   }
 });
 ////////////////////////////////////////////////////////
-backEndRouter.post("/read" , async function(req,res) {
+TCodeRouter.post("/read" , async function(req,res) {
   try {
   //debugger;
   /////////////////////////////////////
-      const verifyResp = verify(req); 
-      if(!verifyResp.ok){
-      return res.status(400).json({message:verifyResp.message})
-      }/////////////////////////////////////
+      // const verifyResp = verify(req); 
+      // if(!verifyResp.ok){
+      // return res.status(400).json({message:verifyResp.message})
+      // }/////////////////////////////////////
   const id  = req.body.id;
   const tcode  = req.body.tcode;
   if (!id || !tcode) {return  res.status(400).json({ message: "missing data" }); }
@@ -115,7 +96,7 @@ backEndRouter.post("/read" , async function(req,res) {
    const theMdl = await getModel(tcode);
   if(!theMdl) { return res.status(404).json({ ok:false, message: "tcode not found" });}
 
-   const item  = await theMdl.findById(id).lean();
+   const item  = await theMdl.get(id);
       if (item !== null   ){
         return res.status(200).json({item});
       }else {
@@ -127,92 +108,28 @@ backEndRouter.post("/read" , async function(req,res) {
   }
 });
 ////////////////////////////////////////////////////////
-backEndRouter.post("/teacher_login", async function (req, res) {
-  try {
-  debugger;
-    const email = req.body.email;
-    const passwordPlain = req.body.password;
-    // Input validation
-    if (!email || !passwordPlain) {
-      return res.status(400).json({ message: "Email and password are required" });
-    }
-    // if there is no status in the table it will return "teacher" as per the default in the Schema
-    const user = await Teacher.findOne({ email });
-    // console.log("user", user);
-    if (user == null) {
-      return res.status(404).json({ msg: "Email address not found" });
-    }
-
-    if (await bcrypt.compare(passwordPlain, user.password)) {
-      const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-    const status = user.status;
-    // const teacher_name = extractEmailPrefix(email);
-    const teacher_name = email ;
-
-    res.set("Authorization", `Bearer ${token}`);
-    return res.status(200).json({ message: "Login successful", token: token ,status,teacher_name});
-    } else {
-      return res.status(401).json({  msg: "Invalid email or password" });
-    }
-  } catch (error) {
-    // console.log(error);
-    return res.status(500).json({  msg: "Login failed", error });
-  }
-});
 ////////////////////////////////////////////////////////
+// TCodeRouter.post("/add_question" , async function(req,res) {
+//   try {
+//     debugger;
+//     /////////////////////////////////////
+//       const verifyResp = verify(req); 
+//       if(!verifyResp.ok){
+//       return res.status(400).json({message:verifyResp.message})
+//       }/////////////////////////////////////
+//    const qData  = req.body.qData;
+//    const result = await addQuestion(qData);
+//     if (result.ok  ){
+//       return res.status(200).json({ question: result.question, message: "success" });
+//     }else {
+//       return res.status(404).json({ message: result.message });
+//     }                  
+//   } catch(error) {
+//     return res.status(400).json({message : 'unknown error!'  });
+//   }
+// });
 ////////////////////////////////////////////////////////
-backEndRouter.post("/teacher_signup", async function (req, res) {
-  try {
-    const email = req.body.email;
-    const passwordPlain = req.body.password;
-    // Input validation
-    if (!email || !passwordPlain) {
-      return res.status(400).json({ message: "Email and password are required" });
-    }
-
-    const user = await Teacher.findOne({ email });
-    if (user) {
-      return res.status(404).json({ message: "This Email already exists" });
-    }
-    debugger;
-    const hashedPassword = await bcrypt.hash(passwordPlain, 2);
-    const data = {email, password: hashedPassword, status: 'teacher'}
-
-    const newuser = await Teacher.create(data);
-    if(newuser){
-      await sendGmail(email);
-      return res.status(200).json({  message: "your account has been created" });
-    } else {
-      return res.status(500).json({  message: "signup failed"});
-    }
-  } catch (error) {
-    return res.status(500).json({  msg: "signup failed", error });
-  }
-});
-
-////////////////////////////////////////////////////////
-backEndRouter.post("/add_question" , async function(req,res) {
-  try {
-    debugger;
-    /////////////////////////////////////
-      const verifyResp = verify(req); 
-      if(!verifyResp.ok){
-      return res.status(400).json({message:verifyResp.message})
-      }/////////////////////////////////////
-   const qData  = req.body.qData;
-   const result = await addQuestion(qData);
-    if (result.ok  ){
-      return res.status(200).json({ question: result.question, message: "success" });
-    }else {
-      return res.status(404).json({ message: result.message });
-    }                  
-  } catch(error) {
-    return res.status(400).json({message : 'unknown error!'  });
-  }
-});
-////////////////////////////////////////////////////////
-backEndRouter.post("/copy_question" , async function(req,res) {
+TCodeRouter.post("/copy_question" , async function(req,res) {
  try{
    /////////////////////////////////////
     const verifyResp = verify(req); 
@@ -258,14 +175,14 @@ backEndRouter.post("/copy_question" , async function(req,res) {
  }
 });
 ////////////////////////////////////////////////////////
-backEndRouter.post("/delete_question" , async function(req,res) {
+TCodeRouter.post("/delete_question" , async function(req,res) {
   try {
   
   /////////////////////////////////////
-      const verifyResp = verify(req); 
-      if(!verifyResp.ok){
-      return res.status(400).json({message:verifyResp.message})
-      }/////////////////////////////////////   
+      // const verifyResp = verify(req); 
+      // if(!verifyResp.ok){
+      // return res.status(400).json({message:verifyResp.message})
+      // }/////////////////////////////////////   
 debugger;
   const id  = req.body.id;
   const tcode  = req.body.tcode;
@@ -290,15 +207,9 @@ debugger;
     return res.status(400).json({msg : 'unknown error!'  });
   }
 });
-////////////////////////////////////////////////////////
-backEndRouter.get("/add" , async function(req,res) {
-  debugger;
-  // const r = await sendEmail();
 
-  res.status(200).json({success :true ,  message : r});
-  });
 ////////////////////////////////////////////////////////
-module.exports = backEndRouter;
+module.exports = TCodeRouter;
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
