@@ -4,7 +4,9 @@ class TCode {
   constructor(model) {
     this.model = model;
   }
-
+ mongooseModel(){
+  return this.model;
+ }
  async getSyllabus() {
   try {
  const questions = await this.model.find({}).select({
