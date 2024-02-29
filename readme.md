@@ -56,15 +56,16 @@ The objective of this module is to provide a Mongoose Schema called "TCodeSchema
 16 : slides            : [Slides], -
 17 : version           : Number, 0.1
 18 : sortOrder         : Number, 0
+```
 
+## tcode function
 
-///// tcode function
-
+```javascript
 
 const mongoose = require('mongoose');
 const TCodeSchema = require('./TCodeSchema');
 const TCode = require("./TCode");
-
+let registered = false;
 const tcodeModels = [];
 
 function getTcode(tcode_name){
@@ -80,11 +81,16 @@ function getTcode(tcode_name){
 }
 
 function registerTcode(list=[]){
+    if(!registered) {registered = true;}
+    else {return {ok:false,message : "already registered"}}
 
-    for (let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {    
         
         const tcode_name = list[i];
-        
+        if (mongoose.modelNames().includes(tcode_name)) {
+            console.warn(`Model "${tcode_name}" already exists, skipping...`);
+            return; // Skip registering this TCode
+        }
         const mongoose_mdl =  mongoose.model(tcode_name, TCodeSchema);
         const tcode_mdl =  new TCode(mongoose_mdl);
         
@@ -93,10 +99,30 @@ function registerTcode(list=[]){
             value : tcode_mdl
         });
     }
-
-
 }
-
 module.exports = {getTcode,registerTcode};
+
+```
+
+
+
+## TCode API
+
+```javascript
+
+1:  mongooseModel() : Return the mongoose orignal Model
+2:  getSyllabus() : return { ok: true,questions };
+3:  update(question) : return { ok: true ,result : update_result};2
+4:  get(id) : return { question, message: "success" ,ok:true};
+5:  addQuestion(tcode,qData) : return {ok:true , question};
+6:  where(query={}) : return { questions, ok: true };
+7:  count(query={}) : return { count, ok: true };
+8:  delete(id) : return {ok : true ,message : "Question deleted", status:200 };
+9:  getUniqueChapters() : return { ok: true, chapters };
+10: getUniqueExercises() : return { ok: true, exercises: exercises[0].exercises };
+11: getByStatus(status="final") : return { ok: true, questions };
+12: getByQuestionType(questionType="free") : return { ok: true, questions };
+13: getChapter(chapterNumber) : return { ok: true, questions };
+14: getExercise(exerciseString) : { ok: true, questions }
 
 ```

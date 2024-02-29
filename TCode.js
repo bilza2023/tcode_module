@@ -28,54 +28,13 @@ class TCode {
   }
 }
 
-//A special question may or may not have exercise. if it has exercise then it is special to that exercise but if it does not then it is special to the chapter.
-// static async CreateQSpecial(questionType,board,classNo,chapter,name, exercise=""){
-//  try{
-//  //  debugger;
-//     const qReg = getQSpecial(questionType,board,classNo,chapter,name,exercise);
-//     const questionData = checkNewQ(qReg);
-//     const existingQuestion = await MathFull.findOne(
-//       { filename: questionData. question.filename });
-//   if (existingQuestion) {
-//       return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
-//     }
-//     //--now actual insert    
-//             let q = new MathFull(questionData.question);
-//             const question = await q.save();
-            
-//       return { question , ok : true};
-//  } catch (e) {
-//     return {message: e.message , ok:false,errorCode : e.code}
-//  }
-
-// }
-// static async CreateQReg(questionType,board,classNo,chapter,exercise,questionNo,part){
-//  try{
-// //  debugger;
-//     const qReg = getQReg(questionType,board,classNo,chapter,exercise,questionNo,part);
-//     const questionData = checkNewQ(qReg);
-//         const existingQuestion = await MathFull.findOne(
-//       { filename: questionData. question.filename });
-//   if (existingQuestion) {
-//       return { message: 'Duplicate filename', ok: false, errorCode: 'DUPLICATE_FILENAME' };
-//     }        
-//             let q = new MathFull(questionData.question);
-//             const question = await q.save();
-            
-//       return { question ,ok:true};
-//  } catch (e) {
-//     return {message: e.message , ok:false,errorCode : e.code}
-//  }
-
-// }
-
 //update
  async update(question){
 try{
       const options = { new: false, upsert: false };
-      const r = await this.model.findByIdAndUpdate(question._id, question, options);
+      const update_result = await this.model.findByIdAndUpdate(question._id, question, options);
       // console.log(r);
-      return { ok: true };
+      return { ok: true ,result : update_result};
 
   }catch(error){
         // return res.status(400).json({ok: false , message:"failed to update question" });
@@ -98,7 +57,7 @@ try{
   }
 
 }
-async addQuestion(qData,tcode){
+async addQuestion(tcode,qData){
   try{
       getFilename(qData,tcode)
        let q = new this.model(qData);
@@ -114,28 +73,7 @@ async addQuestion(qData,tcode){
   }
  
  }
-//  async createQuestion(qData){
-//  try{
-// //  debugger;
-//     const questionData = getQuestionData(qData);
 
-//     if(questionData.ok){
-//       let q = new this.model(questionData.question);
-//       const question = await q.save();
-//       return {ok:true , question};
-//     }else {
-//         return {ok:false,message:questionData.message};
-//     }
-    
-//  } catch (e) {
-//     if(e.code == 11000){
-//     return {message: 'Question already exists' , ok:false}
-//     }else{
-//     return {message: e.message , ok:false,errorCode : e.code}
-//     }
-//  }
-
-// }
 ///////////////////////////////
  async where(query={}) {
    try {

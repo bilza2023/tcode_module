@@ -21,17 +21,13 @@ function registerTcode(list=[]){
     if(!registered) {registered = true;}
     else {return {ok:false,message : "already registered"}}
 
-
-    for (let i = 0; i < list.length; i++) {
-    
+    for (let i = 0; i < list.length; i++) {    
         
         const tcode_name = list[i];
-
         if (mongoose.modelNames().includes(tcode_name)) {
             console.warn(`Model "${tcode_name}" already exists, skipping...`);
             return; // Skip registering this TCode
         }
-        
         const mongoose_mdl =  mongoose.model(tcode_name, TCodeSchema);
         const tcode_mdl =  new TCode(mongoose_mdl);
         
@@ -40,8 +36,5 @@ function registerTcode(list=[]){
             value : tcode_mdl
         });
     }
-
-
 }
-
 module.exports = {getTcode,registerTcode};
