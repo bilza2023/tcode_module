@@ -66,9 +66,10 @@ async addQuestion(tcode,qData){
     
   } catch (e) {
      if(e.code == 11000){
-     return {message: 'Question already exists' , ok:false}
+     return {message: 'Dublicate filename : Question already exists' , ok:false}
      }else{
-     return {message: e.message , ok:false,errorCode : e.code}
+      //e.message, errorCode : e.code //--do not send to user --stop here 
+     return {message: "failed to create" , ok:false}
      }
   }
  
@@ -177,18 +178,18 @@ async getUniqueExercises() {
 
 async getByStatus(status="final") {
   try {
-    const questions = await this.model.find({ status });
+    const items = await this.model.find({ status });
 
-    return { ok: true, questions };
+    return { ok: true, items };
   } catch (error) {
     return { ok: false, message: "Failed to get by status", error };
   }
 }
 async getByQuestionType(questionType="free") {
   try {
-    const questions = await this.model.find({ questionType });
+    const items = await this.model.find({ questionType });
 
-    return { ok: true, questions };
+    return { ok: true, items };
   } catch (error) {
     return { ok: false, message: "Failed to get questions by question type", error };
   }
@@ -196,8 +197,8 @@ async getByQuestionType(questionType="free") {
 
 async getChapter(chapterNumber) {
   try {
-    const questions = await this.model.find({ chapter: chapterNumber });
-    return { ok: true, questions };
+    const items = await this.model.find({ chapter: chapterNumber });
+    return { ok: true, items };
   } catch (error) {
     return { ok: false, message: "Failed to get questions by chapter", error };
   }
@@ -205,8 +206,8 @@ async getChapter(chapterNumber) {
 
 async getExercise(exerciseName) {
   try {
-    const questions = await this.model.find({ exercise: exerciseName });
-    return { ok: true, questions };
+    const items = await this.model.find({ exercise: exerciseName });
+    return { ok: true, items };
   } catch (error) {
     return { ok: false, message: "Failed to get questions by exercise", error };
   }
