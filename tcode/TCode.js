@@ -78,9 +78,9 @@ async addQuestion(tcode,qData){
  async where(query={}) {
    try {
    // Use Mongoose's "find" method with the provided query
-   const questions = await this.model.find(query);
+   const items = await this.model.find(query);
 
-   return { questions, ok: true };
+   return { items, ok: true };
    } catch (e) {
    return { message: e.message, ok: false, errorCode: e.code };
    }
@@ -203,9 +203,9 @@ async getChapter(chapterNumber) {
   }
 }
 
-async getExercise(exerciseString) {
+async getExercise(exerciseName) {
   try {
-    const questions = await this.model.find({ exercise: exerciseString });
+    const questions = await this.model.find({ exercise: exerciseName });
     return { ok: true, questions };
   } catch (error) {
     return { ok: false, message: "Failed to get questions by exercise", error };
