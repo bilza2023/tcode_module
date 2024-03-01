@@ -13,6 +13,7 @@ class TCode {
       classNo: 1,
       chapter: 1,
       board: 1,
+      exercise:1,
       isSpecial: 1,
       partNo: 1,
       questionType: 1,
