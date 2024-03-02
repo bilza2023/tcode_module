@@ -1,3 +1,12 @@
+/**
+ * 3-Mar-2024
+ * What are rules implemented at this level
+ *  1- The item can not be deleted if has slides.
+ *  2- The file path is calculated as per 1 exclusive function thus it is kept unique.
+ *  3- Board and chapter are only 2 variables required but at create time "filename" is added into the data.
+ * 4- You can expose the mongoose-model using "mongooseModel()"
+ * 5- I have decided to keep debugging-mode/non-debugging-mode out of this level (on top). This means that tcode_module is always in debugging mode and it is the api on top (Taleem_Api) to decide to expose it to use or not. From here we are sending all errors using "e"
+ */
 const mongoose = require("mongoose");
 
 class TCode {
@@ -24,8 +33,8 @@ class TCode {
     });
 
     return { ok: true,questions };
-  } catch (error) {
-    return { ok: false, message: "failed to get syllabus" };
+  } catch (e) {
+    return { e:e, ok: false, message: "failed to get syllabus" };
   }
 }
 
@@ -35,11 +44,11 @@ try{
       const options = { new: false, upsert: false };
       const update_result = await this.model.findByIdAndUpdate(question._id, question, options);
       // console.log(r);
-      return { ok: true ,result : update_result};
+      return { ok: true ,result : update_result,message:"success"};
 
-  }catch(error){
+  }catch(e){
         // return res.status(400).json({ok: false , message:"failed to update question" });
-        return {ok: false,error}
+        return {e:e, ok: false}
 
   }
 }
@@ -53,8 +62,8 @@ try{
       }else {
         return { message: "Not found" ,ok:false};
       }      
-  } catch(error) {
-    return {message : 'unknown error!',ok:false  };
+  } catch(e) {
+    return {message : 'unknown error!',ok:false ,e:e };
   }
 
 }
@@ -67,10 +76,10 @@ async addQuestion(tcode,qData){
     
   } catch (e) {
      if(e.code == 11000){
-     return {message: 'Dublicate filename : Question already exists' , ok:false}
+     return {e:e,message: 'Dublicate filename : Question already exists' , ok:false}
      }else{
       //e.message, errorCode : e.code //--do not send to user --stop here 
-     return {message: "failed to create" , ok:false}
+     return {e:e,message: "failed to create" , ok:false}
      }
   }
  
@@ -82,18 +91,18 @@ async addQuestion(tcode,qData){
    // Use Mongoose's "find" method with the provided query
    const items = await this.model.find(query);
 
-   return { items, ok: true };
+   return { items, ok: true ,message:"success"};
    } catch (e) {
-   return { message: e.message, ok: false, errorCode: e.code };
+   return { e:e, message: e.message, ok: false };
    }
 }
 //////////////////////////
  async count(query={}) {
    try {
    const count = await this.model.countDocuments(query);
-   return { count, ok: true };
+   return { count, ok: true ,message:"success"};
    } catch (e) {
-   return { message: e.message, ok: false, errorCode: e.code };
+   return { e:e, message: e.message, ok: false };
    }
 }
 //////////////////////////
@@ -112,8 +121,8 @@ try{
      await this.model.findByIdAndRemove(objectId );    
      return {ok : true ,message : "Question deleted", status:200 };
 
-}catch(err){
-    return {ok : false , message : "Failed to delete", };
+}catch(e){
+    return {e:e, ok : false , message : "Failed to delete" };
 }  
 }
 
@@ -142,8 +151,8 @@ async getUniqueChapters() {
     } else {
       return { ok: false, message: "No chapters found" };
     }
-  } catch (error) {
-    return { ok: false, message: "Failed to get unique chapters", error };
+  } catch (e) {
+    return {e:e, ok: false, message: "Failed to get unique chapters" };
   }
 }
 
@@ -172,8 +181,8 @@ async getUniqueExercises() {
     } else {
       return { ok: false, message: "No exercises found" };
     }
-  } catch (error) {
-    return { ok: false, message: "Failed to get unique exercises", error };
+  } catch (e) {
+    return {e:e, ok: false, message: "Failed to get unique exercises" };
   }
 }
 
@@ -181,36 +190,36 @@ async getByStatus(status="final") {
   try {
     const items = await this.model.find({ status });
 
-    return { ok: true, items };
-  } catch (error) {
-    return { ok: false, message: "Failed to get by status", error };
+    return { ok: true, items ,message:"success"};
+  } catch (e) {
+    return { e:e,ok: false, message: "Failed to get by status" };
   }
 }
 async getByQuestionType(questionType="free") {
   try {
     const items = await this.model.find({ questionType });
 
-    return { ok: true, items };
-  } catch (error) {
-    return { ok: false, message: "Failed to get questions by question type", error };
+    return { ok: true, items ,message:"success"};
+  } catch (e) {
+    return {e:e, ok: false, message: "Failed to get questions by question type" };
   }
 }
 
 async getChapter(chapterNumber) {
   try {
     const items = await this.model.find({ chapter: chapterNumber });
-    return { ok: true, items };
-  } catch (error) {
-    return { ok: false, message: "Failed to get questions by chapter", error };
+    return { ok: true, items ,message:"success"};
+  } catch (e) {
+    return {e:e, ok: false, message: "Failed to get questions by chapter" };
   }
 }
 
 async getExercise(exerciseName) {
   try {
     const items = await this.model.find({ exercise: exerciseName });
-    return { ok: true, items };
-  } catch (error) {
-    return { ok: false, message: "Failed to get questions by exercise", error };
+    return { ok: true, items ,message:"success"};
+  } catch (e) {
+    return {e:e, ok: false, message: "Failed to get questions by exercise" };
   }
 }
 

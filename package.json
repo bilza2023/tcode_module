@@ -1,6 +1,6 @@
 {
   "name": "tcode_module",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Bilza.js application",
   "main": "index.js",
   "scripts": {

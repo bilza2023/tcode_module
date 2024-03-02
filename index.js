@@ -1,3 +1,22 @@
+/**
+ * 3-Mar-2024
+ * - Database-Api specifically for Taleem Projects
+ * - This is a set of  models (tcode,user) which consumes mongoose models and provide their own models with specific methods.
+ *  - All the models are created on start and kept in "tcodeModels" and passed to use using getTcode
+ *  - How it works : When we create "tcodes" at start they represent each course in our database and 1 model is made for each course. It also injects "user" table into the mix and that too is delivered using "getTcode" but the user has its own schema. 
+ * - So this library using "getTcode" deliver 2 types of Models 1: non tcode type (just user for now) 2: tcode type: They are all created from "TCode model" which provides its own features on top of mongoose model. 
+ * - There is no authentication or http at this level, just connect to the database and expose functions.
+ * 
+ * ******************** Gerneral IDea ***********************************
+ *      Point 1::- We create a mongoose-Schema and then give it a string "tcode" which is the name of the table to be used with this schema.
+ *      const MathFull = mongoose.model('MathFull', TCodeSchema);
+ * So if we have more than 1 tables which use the same schema (all my courses use the same schema) we can get their table-names (tcodes) and pre-compile these models and give to the user the required one by "getTocde" by providing correct tcode.
+ *      Point 2:: On top of this the "models" that we provide are not mongoose-models rather out own models "TCode" and "User" which provide features specific to Taleem projects.
+ *  
+ * 
+ * 
+ * 
+ */
 
 const mongoose = require('mongoose');
 const TCodeSchema = require('./tcode/TCodeSchema');
@@ -5,6 +24,7 @@ const UserSchema = require('./user/UserSchema');
 const TCode = require("./tcode/TCode");
 const User = require("./user/User");
 let registered = false;
+
 const tcodeModels = [];
 
 function getTcode(tcode_name){
@@ -23,7 +43,7 @@ function getUser(){
 }
 
 function registerTcode(list=[]){
-    debugger;
+    // debugger;
     if(!registered) {registered = true;}
     else {return {ok:false,message : "already registered"}}
     
