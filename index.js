@@ -71,4 +71,5 @@ function registerTcode(list=[]){
     });
 //   console.log("tcodeModels",tcodeModels);  
 }
+
 module.exports = {getTcode,registerTcode,getUser};

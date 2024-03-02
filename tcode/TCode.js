@@ -396,6 +396,39 @@ async getExerciseByChapterSyllabus(chapterNumber, exerciseName) {
     return { e: error, ok: false, message: "Failed to get exercise syllabus" };
   }
 }
+async slidesState(chapterNumber, exerciseName) {
+  try {
+    // Validate the chapterNumber and exerciseName inputs
+    if (typeof chapterNumber !== 'number' || isNaN(chapterNumber)) {
+      throw new Error("Invalid chapter number provided");
+    }
+    if (typeof exerciseName !== 'string' || exerciseName.trim() === '') {
+      throw new Error("Invalid exercise name provided");
+    }
+
+    const items = await this.model.aggregate([
+      { $match: { chapter: chapterNumber, exercise: exerciseName } },
+      { 
+        $project: {
+          chapter: 1,
+          board: 1,
+          exercise: 1,
+          name: 1,
+          partNo: 1,
+          questionType: 1,
+          status: 1,
+          free: 1,
+          filename: 1,
+          slidesCount: { $size: "$slides" } // Step 3: Counting the number of items in the "slides" array
+        } 
+      }
+    ]);
+
+    return { ok: true, items, message: "Exercise syllabus retrieved successfully" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get exercise syllabus" };
+  }
+}
 
 ////--> get chapter-map ==done
 ////--> number of sides list (number of slides in each question)
