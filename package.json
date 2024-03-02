@@ -1,6 +1,6 @@
 {
   "name": "tcode_module",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Bilza.js application",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,7 @@
   "author": "Bilal Tariq",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.18.3",
     "mongoose": "7.0.0",
     "uuid": "^9.0.0"
   },

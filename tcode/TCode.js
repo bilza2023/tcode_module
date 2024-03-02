@@ -18,130 +18,194 @@ class TCode {
  }
  async getSyllabus() {
   try {
- const questions = await this.model.find({}).select({
-      
+    // Attempt to fetch syllabus data from the database
+    const questions = await this.model.find({}).select({
       chapter: 1,
       board: 1,
-      exercise:1,
-      isSpecial: 1,
+      exercise: 1,
+      // isSpecial: 1,
+      name: 1,
       partNo: 1,
       questionType: 1,
       status: 1,
       free: 1,
       filename: 1,
-      filledBy:1
     });
 
-    return { ok: true,questions };
-  } catch (e) {
-    return { e:e, ok: false, message: "failed to get syllabus" };
+    // Return the fetched questions if successful
+    return { ok: true, questions };
+  } catch (error) {
+    // Log the error for debugging purposes
+    // console.error('Error in getSyllabus:', error);
+
+    // Determine the type of error and provide appropriate error handling
+    if (error instanceof mongoose.Error) {
+      // Handle Mongoose errors
+      return { ok: false, message: 'Failed to fetch syllabus data: Mongoose error occurred', error };
+    } else {
+      // Handle other types of errors
+      return { ok: false, message: 'Failed to fetch syllabus data: Unknown error occurred', error };
+    }
   }
 }
+
 
 //update
- async update(question){
-try{
-      const options = { new: false, upsert: false };
-      const update_result = await this.model.findByIdAndUpdate(question._id, question, options);
-      // console.log(r);
-      return { ok: true ,result : update_result,message:"success"};
-
-  }catch(e){
-        // return res.status(400).json({ok: false , message:"failed to update question" });
-        return {e:e, ok: false}
-
-  }
-}
-//Get Question
- async get(id){
+async update(question) {
   try {
-// debugger;
-    const question = await this.model.findById( id ).lean();;
-      if (question !== null   ){
-        return { question, message: "success" ,ok:true};
-      }else {
-        return { message: "Not found" ,ok:false};
-      }      
-  } catch(e) {
-    return {message : 'unknown error!',ok:false ,e:e };
-  }
+    // Specify update options
+    const options = { new: false, upsert: false };
 
-}
-async addQuestion(tcode,qData){
-  try{
-      getFilename(qData,tcode)
-       let q = new this.model(qData);
-       const question = await q.save();
-       return {ok:true , question};
-    
-  } catch (e) {
-     if(e.code == 11000){
-     return {e:e,message: 'Dublicate filename : Question already exists' , ok:false}
-     }else{
-      //e.message, errorCode : e.code //--do not send to user --stop here 
-     return {e:e,message: "failed to create" , ok:false}
-     }
+    // Attempt to update the question in the database
+    const updateResult = await this.model.findByIdAndUpdate(question._id, question, options);
+
+    // Return a success message along with the update result if successful
+    return { ok: true, result: updateResult, message: 'Question updated successfully' };
+  } catch (error) {
+    // Log the error for debugging purposes
+    // console.error('Error in update:', error);
+
+    // Determine the type of error and provide appropriate error handling
+    if (error instanceof mongoose.Error) {
+      // Handle Mongoose errors
+      return { ok: false, message: 'Failed to update question: Mongoose error occurred', error };
+    } else {
+      // Handle other types of errors
+      return { ok: false, message: 'Failed to update question: Unknown error occurred', error };
+    }
   }
- 
- }
+}
+
+//Get Question
+async get(id) {
+  try {
+    // Attempt to find the question by ID
+    const question = await this.model.findById(id).lean();
+
+    // Check if the question exists
+    if (question !== null) {
+      return { ok: true, question, message: 'success' };
+    } else {
+      return { ok: false, message: 'Question not found' };
+    }
+  } catch (error) {
+    // Log the error for debugging purposes
+    // console.error('Error in get:', error);
+
+    // Return an error object with a generic error message
+    return { ok: false, message: 'Failed to fetch question', error };
+  }
+}
+async addQuestion(tcode, qData) {
+  try {
+    // Generate filename for the question
+    getFilename(qData, tcode);
+
+    // Create a new question instance
+    const newQuestion = new this.model(qData);
+
+    // Save the question to the database
+    const savedQuestion = await newQuestion.save();
+
+    // Return success message along with the saved question
+    return { ok: true, question: savedQuestion, message: 'Question created successfully' };
+  } catch (error) {
+    // Log the error for debugging purposes
+    // console.error('Error in addQuestion:', error);
+
+    // Check if the error is due to duplicate filename
+    if (error.code === 11000) {
+      return { ok: false, message: 'Duplicate filename: Question already exists', error };
+    } else {
+      // Return a generic error message for other types of errors
+      return { ok: false, message: 'Failed to create question', error };
+    }
+  }
+}
 
 ///////////////////////////////
- async where(query={}) {
-   try {
-   // Use Mongoose's "find" method with the provided query
-   const items = await this.model.find(query);
+async where(query = {}) {
+  try {
+    // Use Mongoose's "find" method with the provided query
+    const items = await this.model.find(query);
 
-   return { items, ok: true ,message:"success"};
-   } catch (e) {
-   return { e:e, message: e.message, ok: false };
-   }
+    // Return the items along with success message
+    return { ok: true, items, message: 'success' };
+  } catch (error) {
+    // Log the error for debugging purposes
+    // console.error('Error in where:', error);
+
+    // Return an error object with the error message
+    return { ok: false, message: 'Failed to fetch items', error };
+  }
 }
+
 //////////////////////////
- async count(query={}) {
-   try {
-   const count = await this.model.countDocuments(query);
-   return { count, ok: true ,message:"success"};
-   } catch (e) {
-   return { e:e, message: e.message, ok: false };
-   }
+async count(query = {}) {
+  try {
+    // Count documents matching the query
+    const count = await this.model.countDocuments(query);
+
+    // Return the count along with success message
+    return { ok: true, count, message: 'Count successful' };
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Error in count:', error);
+
+    // Return an error object with the error message
+    return { ok: false, message: 'Failed to count documents', error };
+  }
 }
+
 //////////////////////////
- async delete(id){
-try{
-//  debugger;
-     let objectId = new mongoose.Types.ObjectId(id);
-     const question = await this.model.findById(objectId );    
-     if (!question){
-            return {ok : false ,message : "question not found", status:404 };
-     }
-     if (question.slides.length > 0){
-            return {ok : false ,message : "question has content", status:500 };
-     }
-     
-     await this.model.findByIdAndRemove(objectId );    
-     return {ok : true ,message : "Question deleted", status:200 };
+async delete(id) {
+  try {
+    // Convert the id to a MongoDB ObjectId
+    const objectId = mongoose.Types.ObjectId(id);
 
-}catch(e){
-    return {e:e, ok : false , message : "Failed to delete" };
-}  
+    // Find the question by id
+    const question = await this.model.findById(objectId);
+
+    // Check if the question exists
+    if (!question) {
+      return { ok: false, message: 'Question not found', status: 404 };
+    }
+
+    // Check if the question has slides
+    if (question.slides.length > 0) {
+      return { ok: false, message: 'Question has content', status: 500 };
+    }
+
+    // Delete the question
+    await this.model.findByIdAndRemove(objectId);
+
+    // Return success message
+    return { ok: true, message: 'Question deleted', status: 200 };
+  } catch (error) {
+    // Log the error for debugging purposes
+    // console.error('Error in delete:', error);
+
+    // Return an error object with the error message
+    return { ok: false, message: 'Failed to delete question', error };
+  }
 }
-
+ 
 async getUniqueChapters() {
   try {
     const chapters = await this.model.aggregate([
       {
-        $match: { chapter: { $exists: true } } // Skip documents without the chapter field
+        $match: { chapter: { $exists: true } }
       },
       {
         $group: {
           _id: null,
-          chapters: { $addToSet: "$chapter" } // Create an array of unique chapters
+          chapters: { $addToSet: "$chapter" }
         }
       },
       {
         $project: {
           _id: 0,
-          chapters: 1 // Exclude the default _id field and include only the chapters array
+          chapters: 1
         }
       }
     ]);
@@ -151,8 +215,8 @@ async getUniqueChapters() {
     } else {
       return { ok: false, message: "No chapters found" };
     }
-  } catch (e) {
-    return {e:e, ok: false, message: "Failed to get unique chapters" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get unique chapters" };
   }
 }
 
@@ -160,18 +224,18 @@ async getUniqueExercises() {
   try {
     const exercises = await this.model.aggregate([
       {
-        $match: { exercise: { $exists: true } } // Skip documents without the exercise field
+        $match: { exercise: { $exists: true } }
       },
       {
         $group: {
           _id: null,
-          exercises: { $addToSet: "$exercise" } // Create an array of unique exercises
+          exercises: { $addToSet: "$exercise" }
         }
       },
       {
         $project: {
           _id: 0,
-          exercises: 1 // Exclude the default _id field and include only the exercises array
+          exercises: 1
         }
       }
     ]);
@@ -181,48 +245,97 @@ async getUniqueExercises() {
     } else {
       return { ok: false, message: "No exercises found" };
     }
-  } catch (e) {
-    return {e:e, ok: false, message: "Failed to get unique exercises" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get unique exercises" };
   }
 }
 
-async getByStatus(status="final") {
+async getByStatus(status = "final") {
   try {
     const items = await this.model.find({ status });
 
-    return { ok: true, items ,message:"success"};
-  } catch (e) {
-    return { e:e,ok: false, message: "Failed to get by status" };
+    return { ok: true, items, message: "Success" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get by status" };
   }
 }
-async getByQuestionType(questionType="free") {
+
+async getByQuestionType(questionType = "free") {
   try {
+    // Validate the questionType input
+    if (!['free', 'paid', 'other'].includes(questionType)) {
+      throw new Error("Invalid question type provided");
+    }
+
     const items = await this.model.find({ questionType });
 
-    return { ok: true, items ,message:"success"};
-  } catch (e) {
-    return {e:e, ok: false, message: "Failed to get questions by question type" };
+    return { ok: true, items, message: "Questions retrieved successfully" };
+  } catch (error) {
+    return { error, ok: false, message: "Failed to get questions by question type" };
   }
 }
 
 async getChapter(chapterNumber) {
   try {
+    // Validate the chapterNumber input
+    if (typeof chapterNumber !== 'number' || isNaN(chapterNumber)) {
+      throw new Error("Invalid chapter number provided");
+    }
+
     const items = await this.model.find({ chapter: chapterNumber });
-    return { ok: true, items ,message:"success"};
-  } catch (e) {
-    return {e:e, ok: false, message: "Failed to get questions by chapter" };
+
+    return { ok: true, items, message: "Questions retrieved successfully" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get questions by chapter" };
   }
 }
 
 async getExercise(exerciseName) {
   try {
+    // Validate the exerciseName input
+    if (typeof exerciseName !== 'string' || exerciseName.trim() === '') {
+      throw new Error("Invalid exercise name provided");
+    }
+
     const items = await this.model.find({ exercise: exerciseName });
-    return { ok: true, items ,message:"success"};
-  } catch (e) {
-    return {e:e, ok: false, message: "Failed to get questions by exercise" };
+
+    return { ok: true, items, message: "Questions retrieved successfully" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get questions by exercise" };
+  }
+}
+async chapterMap() {
+  try {
+    const chapterMap = [];
+
+    // Step 1: Aggregate unique chapters
+    const uniqueChapters = await this.model.aggregate([
+      { $group: { _id: "$chapter" } }
+    ]);
+
+    // Step 2: Sort chapters
+    const sortedChapters = uniqueChapters.map(chapter => chapter._id).sort((a, b) => a - b);
+
+    // Step 3: Generate chapter map
+    for (const chapter of sortedChapters) {
+      const exercises = await this.model.distinct("exercise", { chapter });
+      chapterMap.push({ chapter, exercises });
+    }
+
+    return { ok: true, chapterMap };
+  } catch (error) {
+    return { ok: false, message: "Failed to generate chapter map", error };
   }
 }
 
+
+////--> get chapter-map ==done
+////--> number of sides list (number of slides in each question)
+////---> check for some errors..(missing board,chapter, etc)
+////---> list of slide types used by each question.
+///----> error checking for each slide type.
+
+//--> get chapter-exercise list.
 
 }//questions
 
