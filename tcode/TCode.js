@@ -324,7 +324,78 @@ async chapterMap() {
     return { ok: false, message: "Failed to generate chapter map", error };
   }
 }
+async getExerciseByChapter(chapterNumber, exerciseName) {
+  try {
+    // Validate the chapterNumber and exerciseName inputs
+    if (typeof chapterNumber !== 'number' || isNaN(chapterNumber)) {
+      throw new Error("Invalid chapter number provided");
+    }
+    if (typeof exerciseName !== 'string' || exerciseName.trim() === '') {
+      throw new Error("Invalid exercise name provided");
+    }
 
+    const items = await this.model.find({ chapter: chapterNumber, exercise: exerciseName });
+
+    return { ok: true, items, message: "Questions retrieved successfully" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get questions by chapter and exercise" };
+  }
+}
+
+async getChapterSyllabus(chapterNumber) {
+  try {
+    // Validate the chapterNumber input
+    if (typeof chapterNumber !== 'number' || isNaN(chapterNumber)) {
+      throw new Error("Invalid chapter number provided");
+    }
+
+    const items = await this.model.find({ chapter: chapterNumber })
+      .select({
+        chapter: 1,
+        board: 1,
+        exercise: 1,
+        name: 1,
+        partNo: 1,
+        questionType: 1,
+        status: 1,
+        free: 1,
+        filename: 1,
+      });
+
+    return { ok: true, items, message: "Chapter syllabus retrieved successfully" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get chapter syllabus" };
+  }
+}
+
+async getExerciseByChapterSyllabus(chapterNumber, exerciseName) {
+  try {
+    // Validate the chapterNumber and exerciseName inputs
+    if (typeof chapterNumber !== 'number' || isNaN(chapterNumber)) {
+      throw new Error("Invalid chapter number provided");
+    }
+    if (typeof exerciseName !== 'string' || exerciseName.trim() === '') {
+      throw new Error("Invalid exercise name provided");
+    }
+
+    const items = await this.model.find({ chapter: chapterNumber, exercise: exerciseName })
+      .select({
+        chapter: 1,
+        board: 1,
+        exercise: 1,
+        name: 1,
+        partNo: 1,
+        questionType: 1,
+        status: 1,
+        free: 1,
+        filename: 1,
+      });
+
+    return { ok: true, items, message: "Exercise syllabus retrieved successfully" };
+  } catch (error) {
+    return { e: error, ok: false, message: "Failed to get exercise syllabus" };
+  }
+}
 
 ////--> get chapter-map ==done
 ////--> number of sides list (number of slides in each question)
