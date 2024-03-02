@@ -48,8 +48,6 @@ class TCode {
     }
   }
 }
-
-
 //update
 async update(question) {
   try {
@@ -75,7 +73,6 @@ async update(question) {
     }
   }
 }
-
 //Get Question
 async get(id) {
   try {
@@ -161,10 +158,10 @@ async count(query = {}) {
 async delete(id) {
   try {
     // Convert the id to a MongoDB ObjectId
-    const objectId = mongoose.Types.ObjectId(id);
+    // const objectId = mongoose.Types.ObjectId(id);
 
     // Find the question by id
-    const question = await this.model.findById(objectId);
+    const question = await this.model.findById(id);
 
     // Check if the question exists
     if (!question) {
@@ -177,7 +174,7 @@ async delete(id) {
     }
 
     // Delete the question
-    await this.model.findByIdAndRemove(objectId);
+    await this.model.findByIdAndRemove(id);
 
     // Return success message
     return { ok: true, message: 'Question deleted', status: 200 };
