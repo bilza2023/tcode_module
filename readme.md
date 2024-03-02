@@ -38,7 +38,7 @@ The objective of this module is to provide a Mongoose Schema called "TCodeSchema
 ```javascript
 =========================== TcodeSchema =======================
 1 : board              : ['bisep', 'fbise'],
-2 : classNo            : Number , required
+2 : classNo            : Number , required2 *** removed
 3 : filename           : String - required - unique
 4 : chapter            : Number , required
 ==============================================================

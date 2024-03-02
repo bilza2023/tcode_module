@@ -5,7 +5,7 @@ const SlidesSchema = require('./slidesSchema');
 /**
  =========================== TcodeSchema =======================
  1 : board              : ['bisep', 'fbise'],
- 2 : classNo            : Number , required
+ 2 : classNo            : Number , required *** removed
  3 : filename           : String - required - unique
  4 : chapter            : Number , required
  ==============================================================
@@ -34,10 +34,10 @@ const TCodeSchema = new Schema({
             required: true
         },
 //2
-classNo: { // Class number
-          type: Number,
-          required:true 
-        },
+// classNo: { // Class number
+//           type: Number,
+//           required:true 
+//         },
 //3       
 filename: {
   type: String,

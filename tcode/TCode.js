@@ -10,7 +10,7 @@ class TCode {
  async getSyllabus() {
   try {
  const questions = await this.model.find({}).select({
-      classNo: 1,
+      
       chapter: 1,
       board: 1,
       exercise:1,
