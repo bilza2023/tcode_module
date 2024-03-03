@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 const SlidesSchema = require('./slidesSchema');
 /**
  =========================== TcodeSchema =======================
- 1 : board              : ['bisep', 'fbise'],
- 2 : classNo            : Number , required *** removed
- 3 : filename           : String - required - unique
- 4 : chapter            : Number , required
+ 1 : board ***removed   : ['bisep', 'fbise'], *** removed
+ 2 : classNo ***removed : Number , *** removed
+ 3 : filename ***added  : String - auto added
+ 4 : chapter ***REQUIRED: Number , required - ONLY REQUIRED FILED
  ==============================================================
  5 : exercise           : String , -
  6 : questionNo         : Number , -
@@ -28,11 +28,11 @@ const SlidesSchema = require('./slidesSchema');
 ///////////////////////////////////////////
 const TCodeSchema = new Schema({
 //1
-  board: { // Board name, can be one of the specified values
-            type: String,
-            enum: ['bisep', 'fbise'],
-            required: true
-        },
+//   board: { // Board name, can be one of the specified values
+//             type: String,
+//             enum: ['bisep', 'fbise'],
+//             required: true
+//         },
 //2
 // classNo: { // Class number
 //           type: Number,
@@ -70,11 +70,11 @@ name:{
       required:false ,
       },
 //9      
-isSpecial:{ 
-        type:Boolean ,
-        required:false ,
-        default:false
-        },
+// isSpecial:{ 
+//         type:Boolean ,
+//         required:false ,
+//         default:false
+//         },
 //10        	
 teacherComments:{
       type:String ,
