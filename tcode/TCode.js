@@ -3,7 +3,7 @@
  * What are rules implemented at this level
  *  1- The item can not be deleted if has slides.
  *  2- The file path is calculated as per 1 exclusive function thus it is kept unique.
- *  3- chapter is only variables required but at create time "filename" is added into the data.
+ *  3- "chapter" is only variables required but at create time "filename" is added into the data.
  * 4- You can expose the mongoose-model using "mongooseModel()"
  * 5- I have decided to keep debugging-mode/non-debugging-mode out of this level (on top). This means that tcode_module is always in debugging mode and it is the api on top (Taleem_Api) to decide to expose it to use or not. From here we are sending all errors using "e"
  */
@@ -428,14 +428,6 @@ async slidesState(chapterNumber, exerciseName) {
     return { e: error, ok: false, message: "Failed to get exercise syllabus" };
   }
 }
-
-////--> get chapter-map ==done
-////--> number of sides list (number of slides in each question)
-////---> check for some errors..(missing,chapter, etc)
-////---> list of slide types used by each question.
-///----> error checking for each slide type.
-
-//--> get chapter-exercise list.
 
 }//questions
 
