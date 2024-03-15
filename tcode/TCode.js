@@ -8,7 +8,7 @@
  * 5- I have decided to keep debugging-mode/non-debugging-mode out of this level (on top). This means that tcode_module is always in debugging mode and it is the api on top (Taleem_Api) to decide to expose it or not. From here we are sending all errors using "error"
  */
 const mongoose = require("mongoose");
-
+const prepResp = require('./prepResp');
 class TCode {
   constructor(model) {
     this.model = model;
@@ -32,6 +32,7 @@ class TCode {
 
     // Return the fetched questions if successful
     return { ok: true, questions };
+    
   } catch (error) {
     // Log the error for debugging purposes
     // console.error('Error in getSyllabus:', error);
