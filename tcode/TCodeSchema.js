@@ -4,95 +4,66 @@ const Schema = mongoose.Schema;
 const SlidesSchema = require('./slidesSchema');
 /**
  =========================== TcodeSchema =======================
- 1 : board ***removed   : ['bisep', 'fbise'], *** removed
- 2 : classNo ***removed : Number , *** removed
- 3 : filename ***added  : String - auto added
- 4 : chapter ***REQUIRED: Number , required - ONLY REQUIRED FILED
+ 1 : chapter ***REQUIRED: Number , required
+ 2 : exercise***REQUIRED: String , required
+ 3 : filename ***added  : String - required but auto added
  ==============================================================
- 5 : exercise           : String , -
- 6 : questionNo         : Number , -
- 7 : part               : Number , -
- 8 : name               : String , -
- 9 : isSpecial          : False  , -
- 10 : teacherComments   : String  , -
- 11 : adminComments     : String  , -
- 12 : questionType      : ['paid', 'login' , 'free'],  , "paid"
- 13 : status            : ['empty' ,'fill' ,'locked', 'final'], "empty"
- 14 : filledBy          : String, -
- 15 : schemaType        : String, "mathSchema"
- 16 : slides            : [Slides], -
- 17 : version           : Number, 0.1
- 18 : sortOrder         : Number, 0
+ 4 : questionNo         : Number , -
+ 5 : part               : Number , -
+ 6 : name               : String , -
+ 7 : questionType       : ['paid', 'login' , 'free'],  , "paid"
+ 8 : status             : ['empty' ,'fill' ,'locked', 'final'], "empty"
+ 9 : filledBy           : String, -
+ 10 : slides            : [Slides], -
+ 11 : tags              : [String]
+ 12 : sortOrder         : Number, 0
 
+ // for now removed "version" we will see when required, replaced it with "tags"
+ // also removed "schemaType" since this is the only schema I have we will se if required but for now this creates confusion.
  */
 ///////////////////////////////////////////
 const TCodeSchema = new Schema({
+
 //1
-//   board: { // Board name, can be one of the specified values
-//             type: String,
-//             enum: ['bisep', 'fbise'],
-//             required: true
-//         },
-//2
-// classNo: { // Class number
-//           type: Number,
-//           required:true 
-//         },
-//3       
-filename: {
-  type: String,
-  required: true,
-  unique: true 
-},
-//4
 chapter:{ // Chapter number 
           type:Number ,
           required:true , 
           },
-//5          
+//2          
 exercise:{ 
         type:String ,
         required:false ,
         },
-//6        
+//3        
+filename: {
+        type: String,
+        required: true,
+        unique: true 
+      },
+//4        
 questionNo:{//same as above 
         type:Number ,
         required:false ,
         },
-//7        
+//5        
 part:{  
         type:Number ,
         required:false ,
         },
-//8
+//6
 name:{  
       type:String ,
       required:false ,
       },
-//9      
-// isSpecial:{ 
-//         type:Boolean ,
-//         required:false ,
-//         default:false
-//         },
-//10        	
-teacherComments:{
-      type:String ,
-      required:false ,
-      },
-//11     
-adminComments:{ 
-      type:String ,
-      required:false ,
-      },
-//12
+
+//7
 questionType:{ 
         type: String ,
         enum: ['paid', 'login' , 'free'],
         required: true,
         default : 'paid'
       },
-//13      
+//8      
 status:{
 	  type: String ,
 	  required:true , 
@@ -100,31 +71,24 @@ status:{
     required: true,
     default : 'empty'
 	  },
-//14
+//9
 	filledBy: {
         type: String,
         required: false
         },
-  //--There are no rules implemented here. rules will be implemented in functions denoted by schemaType
-//15      
-schemaType: {
-        type: String,
-        required: false,
-        default : "mathSchema"
-        },
-//16	
+//10	
 slides: {
         type: [SlidesSchema],
         required: true,
         default : []
         },
-//17        
-version: {
-          type: Number,
-          default: 0.1,
+//11        
+tags: {
+          type: [String],
+          default: [],
           required: true
         },	
-//18        
+//12        
 sortOrder: {
           type: Number,
           default: 0,

@@ -54,11 +54,6 @@ const SlidesSchema = new Schema({
 	type:String ,
 	required:false ,
 	},
-    version:{ 
-	type:String ,
-	required:true ,
-	default : '0.0.0'
-	},//items compExtra template
     template:{ 
 	type:String ,
 	required:true ,
@@ -75,7 +70,6 @@ const SlidesSchema = new Schema({
 	default : []
 	}, 
     
-	
 });
 
 
