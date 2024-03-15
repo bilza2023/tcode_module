@@ -125,3 +125,5 @@ module.exports = {getTcode,registerTcode};
 14: getExercise(exerciseString) : { ok: true, questions }
 
 ```
+
+## NOTE: obtaining "User" using "getTcode" is deprecated and in future versions will be removed from "getTcode" , it will be available independently.

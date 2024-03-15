@@ -17,7 +17,7 @@
  * 
  * 
  */
-
+// 2024-Mar-15 i am thinking of exporting user sperately later.
 const mongoose = require('mongoose');
 const TCodeSchema = require('./tcode/TCodeSchema');
 const UserSchema = require('./user/UserSchema');
@@ -37,7 +37,7 @@ function getTcode(tcode_name){
     }
  return false;    
 }
-
+//--deprecated
 function getUser(){
    return  getTcode("user");
 }

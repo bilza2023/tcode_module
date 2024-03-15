@@ -9,6 +9,7 @@
  */
 // const mongoose = require("mongoose");
 const prepResp = require('./fn/prepResp');
+const getIncomming = require('./fn/getIncomming');
 class TCode {
   constructor(model) {
     this.model = model;
@@ -54,16 +55,22 @@ async update(question) {
   }
 }
 //Get Question
-async get(id) {
+async get(req) { //id
   try {
-    // Attempt to find the question by ID
-    const question = await this.model.findById(id).lean();
+    const incomming_data = getIncomming(req,["id"]);
+    if(!incomming_data.ok){
+      return prepResp(false,400,incomming_data.message); 
+    }
+
+    const question = await this.model.findById(incomming_data.id).lean();
 
     // Check if the question exists
     if (question !== null) {
-      return { ok: true, question, message: 'success' };
+      const ret = prepResp(true,200,'success'); 
+      ret.questiont = question;  //attach question to outgoing
+      return ret; 
     } else {
-      return { ok: false, message: 'Question not found' };
+      return prepResp(false,404,"Question not found",error);
     }
   } catch (error) {
     return prepResp(false,500,"failed to get",error);
