@@ -7,8 +7,8 @@
  * 4- You can expose the mongoose-model using "mongooseModel()"
  * 5- I have decided to keep debugging-mode/non-debugging-mode out of this level (on top). This means that tcode_module is always in debugging mode and it is the api on top (Taleem_Api) to decide to expose it or not. From here we are sending all errors using "error"
  */
-const mongoose = require("mongoose");
-const prepResp = require('./prepResp');
+// const mongoose = require("mongoose");
+const prepResp = require('./fn/prepResp');
 class TCode {
   constructor(model) {
     this.model = model;
@@ -32,20 +32,10 @@ class TCode {
 
     // Return the fetched questions if successful
     return { ok: true, questions };
-    
-  } catch (error) {
-    // Log the error for debugging purposes
-    // console.error('Error in getSyllabus:', error);
 
-    // Determine the type of error and provide appropriate error handling
-    if (error instanceof mongoose.Error) {
-      // Handle Mongoose errors
-      return { ok: false, message: 'Failed to fetch syllabus data: Mongoose error occurred', error };
-    } else {
-      // Handle other types of errors
-      return { ok: false, message: 'Failed to fetch syllabus data: Unknown error occurred', error };
+  } catch (error) {
+    return prepResp(false,500,"Failed to fetch syllabus data",error);
     }
-  }
 }
 //update
 async update(question) {
@@ -58,18 +48,9 @@ async update(question) {
 
     // Return a success message along with the update result if successful
     return { ok: true, result: updateResult, message: 'Question updated successfully' };
-  } catch (error) {
-    // Log the error for debugging purposes
-    // console.error('Error in update:', error);
 
-    // Determine the type of error and provide appropriate error handling
-    if (error instanceof mongoose.Error) {
-      // Handle Mongoose errors
-      return { ok: false, message: 'Failed to update question: Mongoose error occurred', error };
-    } else {
-      // Handle other types of errors
-      return { ok: false, message: 'Failed to update question: Unknown error occurred', error };
-    }
+  } catch (error) {
+    return prepResp(false,500,"update failed",error);
   }
 }
 //Get Question
@@ -85,11 +66,7 @@ async get(id) {
       return { ok: false, message: 'Question not found' };
     }
   } catch (error) {
-    // Log the error for debugging purposes
-    // console.error('Error in get:', error);
-
-    // Return an error object with a generic error message
-    return { ok: false, message: 'Failed to fetch question', error };
+    return prepResp(false,500,"failed to get",error);
   }
 }
 async addQuestion(tcode, qData) {
@@ -106,16 +83,7 @@ async addQuestion(tcode, qData) {
     // Return success message along with the saved question
     return { ok: true, question: savedQuestion, message: 'Question created successfully' };
   } catch (error) {
-    // Log the error for debugging purposes
-    // console.error('Error in addQuestion:', error);
-
-    // Check if the error is due to duplicate filename
-    if (error.code === 11000) {
-      return { ok: false, message: 'Duplicate filename: Question already exists', error };
-    } else {
-      // Return a generic error message for other types of errors
-      return { ok: false, message: 'Failed to create question', error };
-    }
+    return prepResp(false,500,"failed to add question",error);
   }
 }
 
@@ -128,11 +96,7 @@ async where(query = {}) {
     // Return the items along with success message
     return { ok: true, items, message: 'success' };
   } catch (error) {
-    // Log the error for debugging purposes
-    // console.error('Error in where:', error);
-
-    // Return an error object with the error message
-    return { ok: false, message: 'Failed to fetch items', error };
+    return prepResp(false,500,"failed query where",error);
   }
 }
 
@@ -145,11 +109,7 @@ async count(query = {}) {
     // Return the count along with success message
     return { ok: true, count, message: 'Count successful' };
   } catch (error) {
-    // Log the error for debugging purposes
-    console.error('Error in count:', error);
-
-    // Return an error object with the error message
-    return { ok: false, message: 'Failed to count documents', error };
+    return prepResp(false,500,"failed to count",error);
   }
 }
 
@@ -178,11 +138,7 @@ async delete(id) {
     // Return success message
     return { ok: true, message: 'Question deleted', status: 200 };
   } catch (error) {
-    // Log the error for debugging purposes
-    // console.error('Error in delete:', error);
-
-    // Return an error object with the error message
-    return { ok: false, message: 'Failed to delete question', error };
+    return prepResp(false,500,"failed to delete",error);
   }
 }
  
@@ -212,7 +168,7 @@ async getUniqueChapters() {
       return { ok: false, message: "No chapters found" };
     }
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get unique chapters" };
+    return prepResp(false,500,"failed to get unique chapters",error);
   }
 }
 
@@ -242,7 +198,8 @@ async getUniqueExercises() {
       return { ok: false, message: "No exercises found" };
     }
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get unique exercises" };
+    
+    return prepResp(false,500,"failed to get unique exercises",error);
   }
 }
 
@@ -252,7 +209,7 @@ async getByStatus(status = "final") {
 
     return { ok: true, items, message: "Success" };
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get by status" };
+    return prepResp(false,500,"failed to get by status",error);
   }
 }
 
@@ -267,7 +224,7 @@ async getByQuestionType(questionType = "free") {
 
     return { ok: true, items, message: "Questions retrieved successfully" };
   } catch (error) {
-    return { error, ok: false, message: "Failed to get questions by question type" };
+    return prepResp(false,500,"failed to get by question type",error);
   }
 }
 
@@ -282,7 +239,7 @@ async getChapter(chapterNumber) {
 
     return { ok: true, items, message: "Questions retrieved successfully" };
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get questions by chapter" };
+    return prepResp(false,500,"failed to get chapter",error);
   }
 }
 
@@ -297,7 +254,7 @@ async getExercise(exerciseName) {
 
     return { ok: true, items, message: "Questions retrieved successfully" };
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get questions by exercise" };
+    return prepResp(false,500,"failed to get exercise",error);
   }
 }
 async chapterMap() {
@@ -320,7 +277,7 @@ async chapterMap() {
 
     return { ok: true, chapterMap };
   } catch (error) {
-    return { ok: false, message: "Failed to generate chapter map", error };
+    return prepResp(false,500,"failed to get chapter map",error);
   }
 }
 async getExerciseByChapter(chapterNumber, exerciseName) {
@@ -337,7 +294,7 @@ async getExerciseByChapter(chapterNumber, exerciseName) {
 
     return { ok: true, items, message: "Questions retrieved successfully" };
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get questions by chapter and exercise" };
+    return prepResp(false,500,"failed to get exercise by chapter",error);
   }
 }
 
@@ -357,13 +314,12 @@ async getChapterSyllabus(chapterNumber) {
         questionNo: 1,
         questionType: 1,
         status: 1,
-        free: 1,
         filename: 1,
       });
 
     return { ok: true, items, message: "Chapter syllabus retrieved successfully" };
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get chapter syllabus" };
+    return prepResp(false,500,"failed to get chapter syllabus",error);
   }
 }
 
@@ -392,7 +348,7 @@ async getExerciseByChapterSyllabus(chapterNumber, exerciseName) {
 
     return { ok: true, items, message: "Exercise syllabus retrieved successfully" };
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get exercise syllabus" };
+    return prepResp(false,500,"failed to get exercise Syllabus by chapter",error);
   }
 }
 async slidesState(chapterNumber, exerciseName) {
@@ -416,7 +372,6 @@ async slidesState(chapterNumber, exerciseName) {
           questionNo: 1,
           questionType: 1,
           status: 1,
-          free: 1,
           filename: 1,
           slidesCount: { $size: "$slides" } // Step 3: Counting the number of items in the "slides" array
         } 
@@ -425,7 +380,7 @@ async slidesState(chapterNumber, exerciseName) {
 
     return { ok: true, items, message: "Exercise syllabus retrieved successfully" };
   } catch (error) {
-    return { e: error, ok: false, message: "Failed to get exercise syllabus" };
+    return prepResp(false,500,"failed to get slide state",error);
   }
 }
 
